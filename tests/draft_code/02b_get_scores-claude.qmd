@@ -1,0 +1,242 @@
+---
+title: "Get the Importance scores from Claude-3.7"
+author: "Ken Benoit"
+format: html
+execute:
+  echo: true
+  cache: true
+editor: visual
+---
+
+## Load the required packages
+
+```{r}
+library(readtext)
+library(quanteda)
+library(ellmer)
+library(glue)
+library(dplyr)
+library(tibble)
+library(knitr)
+library(kableExtra)
+```
+
+## Read the corpus
+
+Select all manifestos.
+
+```{r}
+data_corpus_manifs <- readtext("/Users/kbenoit/Dropbox/Papers/Manifesto texts/texts/plaintext/Production docs/*.txt") |>
+  corpus()
+data_corpus_manifs$country <- sub("\\ -.*", "", docnames(data_corpus_manifs))
+# data_corpus_manifs <- corpus_subset(data_corpus_manifs, country %in% c("Ireland", "UK"))
+```
+
+## Issue definitions
+
+```{r}
+issues <- c(Economic = "Taxation, spending on public services, and tradeoffs between these.",
+            Social = "Social and lifestyle issues, including, abortion, LBTQ+ issues; support for traditional social values.",
+            Immigration = "Immigration: immigration and border control",
+            EU = "The European Union and European integration.",
+            Environment = "Environmental protection: tradeoffs between protecting the environment and economic growth.",
+            Decentralization = "Decentralization of political power and the role of regional governments.")
+names(issues) <- toupper(names(issues))
+
+# for inspection
+tibble(Category = names(issues), Description = issues) %>%
+  kable() %>%
+  kable_styling(full_width = FALSE) %>%
+  column_spec(2, width = "40em")
+```
+
+## Define the importance functions
+
+```{r}
+# process a single manifesto
+get_importance <- function(x, issues, chat_fn, model = NULL, api_args = list()) {
+  role <- "You are a political expert tasked with reading a political party manifesto and answering some survey questions designed to measure the importance of difference policy issues to the political party.  You should think carefully about your answer and use the full range of the scale provided, when this is justified. Your answer should be based on the content in the manifesto that will be supplied."
+  instructions <- "Based on the party's manifesto, rate the importance to the party of the following issues on a scale of 1 to 7, where 1 means that the policy issue is completely unimportant to the party or is not mentioned at all, a middle score of 4 means the issue of only moderate importance, and a 7 means that the issue of utmost importance to the party and represents the party's top policy priority.  Your answer should be in the format of \"[Issue]: <score>. <rationale>\" where [Issue] is the name of the issue, <score> is the numeric rating and <rationale> is a brief explanation as to why you gave this answer."
+  all_issues <- paste(paste0(names(issues), ": ", issues), collapse = "\n")
+  
+  type_importance <- type_object(
+    party = type_string("The name of the political party that published the manifesto."),
+    language = type_string("The language in which the manifesto is written."),
+    scoring = type_string(paste(instructions, all_issues, x, sep = "\n\n")),
+    #ranking = type_string("Rank each issue in order of relative importance, where 1 is the most important issue and 6 is the least important.  Your answer should be in the format of \"[Issue]: <ranking>. <rationale>\" where [Issue] is the name of the issue, <ranking> is the integer ranking and <rationale> is a brief explanation as to why you gave this answer.")
+  )
+  
+  chat <- chat_fn(model = model, system_prompt = role, api_args = api_args)
+  data <- chat$extract_data(x, type = type_importance)
+  # names(data$scoring) <- paste("Importance_Score", names(issues), sep = "_")
+  # names(data$ranking) <- paste("raking", names(issues), sep = "_")
+  return(data)
+}
+```
+
+## Process all of the manifestos
+
+### Get Claude-3.7 scores for all manifestos
+
+```{r}
+results_list <- vector("list", length(data_corpus_manifs))
+
+for (i in seq_along(data_corpus_manifs)) {
+  name <- names(data_corpus_manifs)[i]
+  message(glue("Processing: [{i}/{ndoc(data_corpus_manifs)}] {name}"))
+  
+  results_list[[i]] <- tryCatch(
+    {
+      this_result <- get_importance(
+        x = data_corpus_manifs[i], 
+        issues = issues,
+        chat_fn = chat_claude,
+        model = "claude-3-7-sonnet-latest",
+        api_args = list(temperature = 0)
+      )
+      tibble(
+        manifesto = name,
+        party = this_result$party,
+        error = "",
+        scoring = this_result$scoring,
+        #ranking = this_result$ranking
+        # !!!as.list(this_result$ranking)
+      )
+    },
+    error = function(e) {
+      message(glue("Error processing {name}: {e$message}"))
+      tibble(
+        manifesto = name,
+        party = NA_character_,
+        error = e$message,
+        scoring = NA_character_
+      )
+    }
+  )
+}
+
+# concatenate list elements when found, for "scoring"
+scoring_is_list <- sapply(results_list, function(x) is.list(x$scoring))
+library(purrr)
+results_list[scoring_is_list] <- lapply(results_list[scoring_is_list], function(x) {
+  x$scoring <- paste(
+    map_chr(names(x$scoring), ~ paste(.x, x$scoring[[.x]], sep = ": ")),
+    collapse = "\n\n"
+  )
+  x
+})
+
+results_df <- bind_rows(results_list)
+```
+
+```{r}
+saveRDS(results_df, file = "importance_scores_Claude_3.7_all.rds")
+```
+
+### Extract the scores from the text
+
+Need to extract the numeric values as data, and deal properly with the missing cases.
+
+```{r extract-scores}
+library(purrr)
+library(stringr)
+library(tidyr)
+
+results_df <- readRDS("importance_scores_Claude_3.7_all.rds")
+
+issue_names <- results_df$scoring %>%
+  str_extract_all("([A-Z]+): \\d+") %>%  # Extract all occurrences of ISSUE: NUMBER
+  unlist() %>%
+  str_extract("^[A-Z]+") %>%  # Extract just the issue name
+  unique() |>
+  na.omit() |>
+  as.character()
+
+extract_scores <- function(text) {
+  pattern <- paste0("(", paste(issue_names, collapse = "|"), "):\\s*(\\d+)")
+  matches_list <- str_match_all(text, pattern)
+  
+  results_list <- lapply(matches_list, function(matches) {
+    if (all(is.na(matches))) {
+      return(setNames(as.list(rep(NA_real_, length(issue_names))), issue_names))
+    }
+    
+    # convert extracted names and scores into a named list
+    scores_list <- setNames(as.numeric(matches[, 3]), matches[, 2])
+    
+    # ensure all issue names exist in output
+    full_scores <- setNames(rep(NA_real_, length(issue_names)), issue_names)
+    full_scores[names(scores_list)] <- scores_list
+    
+    return(as.list(full_scores))
+  })
+  
+  bind_rows(results_list)
+}
+  
+results_df <- results_df %>%
+  bind_cols(extract_scores(results_df$scoring))
+```
+
+The missing cases:
+
+```{r}
+redo_list <- results_df %>%
+  filter(error != "") %>%
+  pull(manifesto)
+redo_list
+```
+
+Try putting them back through:
+
+```{r}
+data_corpus_manifs_redo <- corpus_subset(data_corpus_manifs, docnames(data_corpus_manifs) %in% redo_list)
+results_redo_list <- vector("list", length(data_corpus_manifs_redo))
+
+for (i in seq_along(data_corpus_manifs_redo)) {
+  name <- names(data_corpus_manifs_redo)[i]
+  message(glue("Processing: [{i}/{ndoc(data_corpus_manifs_redo)}] {name}"))
+  
+  results_redo_list[[i]] <- tryCatch(
+    {
+      this_result <- get_importance(
+        x = data_corpus_manifs_redo[i], 
+        issues = issues,
+        chat_fn = chat_gemini,
+        model = "gemini-1.5-pro-latest",
+        api_args = list(list(temperature = 0))
+      )
+      tibble(
+        manifesto = name,
+        party = this_result$party,
+        error = "",
+        scoring = this_result$scoring,
+        #ranking = this_result$ranking
+        # !!!as.list(this_result$ranking)
+      )
+    },
+    error = function(e) {
+      message(glue("Error processing {name}: {e$message}"))
+      tibble(
+        manifesto = name,
+        party = NA_character_,
+        error = e$message,
+        scoring = NA_character_
+      )
+    }
+  )
+}
+
+results_df_redo <- bind_rows(results_redo_list)
+```
+
+Now update the original dataset with the new results.
+
+```{r}
+# update the original dataset
+results_df <- results_df %>%
+  rows_update(results_df_redo, by = "manifesto")
+
+# save it
+saveRDS(results_df, file = "importance_scores_Claude_3.7_all_complete.rds")
+```
