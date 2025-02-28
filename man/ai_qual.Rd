@@ -2,35 +2,35 @@
 % Please edit documentation in R/ai_qual.R
 \name{ai_qual}
 \alias{ai_qual}
-\title{Qualitatively assesses documents using a llm model
-Use the llm model to analyse a set of documents.
-The text-based response is added as an additional column to the input data}
+\title{Qualitatively assesses documents using a llm model}
 \usage{
 ai_qual(.data, texts, model, prompt)
 }
 \arguments{
 \item{.data}{a data frame containing the documents to be summarized}
 
-\item{texts}{the name of the docvar/column in the corpus/data frame containing the documents to be summarized}
+\item{texts}{the name of the docvar/column in the corpus/data frame
+containing the documents to be summarized}
 
 \item{model}{a llm model object}
 
-\item{prompt}{the instruction to the llm model for the assessment - be as specific as possible}
+\item{prompt}{the instruction to the llm model for the assessment - be as
+specific as possible}
 }
 \value{
-the input quanteda corpus or data frame with the document assessments stored as an additional docvar / column
+the input quanteda corpus or data frame with the document assessments
+  stored as an additional docvar / column
 }
 \description{
-Qualitatively assesses documents using a llm model
-Use the llm model to analyse a set of documents.
-The text-based response is added as an additional column to the input data
+Use the llm model to analyse a set of documents. The text-based response is
+added as an additional column to the input data.
 }
 \examples{
-#Don't run
-#ai_qualies <- ai_qual(speeches_split,
-#"splits",
-#"llama3.2",
-#prompt = "Is this text leaning towards the political left?
-#The political left defined as groups which advocate for social equality,
-#government intervention in the economy, and progressive policies.")
+\dontrun{
+prompt = "Is this text leaning towards the political left?
+          The political left defined as groups which advocate for social equality,
+          government intervention in the economy, and progressive policies."
+result <- ai_qual(speeches_split, "splits", "llama3.2", prompt)
+result
+}
 }

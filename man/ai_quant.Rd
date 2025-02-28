@@ -9,16 +9,16 @@ The numerical scores for each text are added as an additional docvar/column to t
 ai_quant(.data, texts, model, concept)
 }
 \arguments{
-\item{.data}{a quanteda corpus or data frame containing the documents to be summarized}
+\item{.data}{a \pkg{quanteda} corpus or data frame containing the documents to be summarized}
 
-\item{texts}{the name of the docvar/column in the corpius/data frame containing the documents to be summarized}
+\item{texts}{the name of the docvar/column in the corpus/data frame containing the documents to be summarized}
 
 \item{model}{a llm model object}
 
 \item{concept}{the concept based on which the llm should score how much the documents align to it - be as specific as possible}
 }
 \value{
-the input quanteda coprus or data frame with the document scores stored as an additional docvar/column
+the input \pkg{quanteda} corpus or data frame with the document scores stored as an additional docvar/column
 }
 \description{
 Score documents using a llm model
@@ -26,11 +26,9 @@ Use the llm model to score a set of documents.
 The numerical scores for each text are added as an additional docvar/column to the input data
 }
 \examples{
-# Don't run
-#sai_quanties <- ai_quant(speeches_split,
-#"splits",
-#"llama3.2",
-#concept = "The political left defined as groups which advocate for social equality,
-#government intervention in the economy, and progressive policies.")
-
+\dontrun{
+concept = "The political left defined as groups which advocate for social equality,
+           government intervention in the economy, and progressive policies."
+sai_quanties <- ai_quant(speeches_split, "splits", "llama3.2", concept)
+}
 }

@@ -6,6 +6,9 @@
 Use the splitting to prepare the data for further llm processing
 The split segments are stored as a new docvar in the input corpus or row in the input data frame
 and a new index is created to keep track of the original document}
+\usage{
+text_split(.data, texts, length_seq = NULL, model = NULL)
+}
 \arguments{
 \item{.data}{a quanteda corpus or data frame containing the documents to be split}
 
@@ -28,6 +31,8 @@ and a new index is created to keep track of the original document
 }
 \examples{
 # Don't run
-#speeches_split <- text_split(speeches, "text", length_seq=512)
+\dontrun{
+speeches_split <- text_split(speeches, "text", length_seq = 512)
+}
 
 }

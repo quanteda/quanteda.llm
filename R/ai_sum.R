@@ -78,7 +78,8 @@ ai_sum <- function(.data, texts, model, length, strict = FALSE) {
 
   # Convert back to corpus if the input was a corpus
   if (is_corpus) {
-    result <- corpus(.data$text, docvars = .data %>% select(-text))
+    text_col <- which(names(.data) == "text")
+    result <- corpus(.data$text, docvars = .data[, -text_col, drop = FALSE])
     return(result)
   }
 

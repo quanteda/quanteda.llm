@@ -18,9 +18,10 @@
 #' @export
 #' @examples
 #' # Don't run
-#' #speeches_split <- text_split(speeches, "text", length_seq=512)
+#' \dontrun{
+#' speeches_split <- text_split(speeches, "text", length_seq = 512)
+#' }
 #'
-source("R/llm_info.R")
 text_split <- function(.data, texts, length_seq = NULL, model = NULL) {
   if (!is.null(model)) {
     if (model %in% names(llm_info)) {
@@ -65,7 +66,8 @@ text_split <- function(.data, texts, length_seq = NULL, model = NULL) {
       ungroup() %>%
       select(-splits)
 
-    result <- corpus(result$text, docvars = result %>% select(-text, -doc_id))
+    drop_col <- which(names(.data) %in% c("text", "doc_id"))
+    result <- corpus(.data$text, docvars = .data[, -drop_col, drop = FALSE])
   }
 
   return(result)

@@ -1,3 +1,7 @@
+#' @importFrom rlang .data
+NULL
+
+## globals
 
 llm_info <- list(
   "GPT-3" = 2048,

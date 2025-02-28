@@ -1,25 +1,21 @@
 #' Score documents using a llm model
 #' Use the llm model to score a set of documents.
 #' The numerical scores for each text are added as an additional docvar/column to the input data
-#' @param .data a quanteda corpus or data frame containing the documents to be summarized
-#' @param texts the name of the docvar/column in the corpius/data frame containing the documents to be summarized
+#' @param .data a \pkg{quanteda} corpus or data frame containing the documents to be summarized
+#' @param texts the name of the docvar/column in the corpus/data frame containing the documents to be summarized
 #' @param model a llm model object
 #' @param concept the concept based on which the llm should score how much the documents align to it - be as specific as possible
 #'
-#' @return the input quanteda coprus or data frame with the document scores stored as an additional docvar/column
+#' @return the input \pkg{quanteda} corpus or data frame with the document scores stored as an additional docvar/column
 #' @name ai_quant
-#' @import ellmer
-#' @import quanteda
-#' @import dplyr
+#' @import ellmer quanteda
 #' @export
 #' @examples
-#' # Don't run
-#' #sai_quanties <- ai_quant(speeches_split,
-#' #"splits",
-#' #"llama3.2",
-#' #concept = "The political left defined as groups which advocate for social equality,
-#' #government intervention in the economy, and progressive policies.")
-#'
+#' \dontrun{
+#' concept = "The political left defined as groups which advocate for social equality,
+#'            government intervention in the economy, and progressive policies."
+#' sai_quanties <- ai_quant(speeches_split, "splits", "llama3.2", concept)
+#' }
 # Define the ai_quant function
 ai_quant <- function(.data, texts, model, concept) {
   is_corpus <- inherits(.data, "corpus")
@@ -61,7 +57,8 @@ ai_quant <- function(.data, texts, model, concept) {
 
   # Convert back to corpus if the input was a corpus
   if (is_corpus) {
-    result <- corpus(.data$text, docvars = .data %>% select(-text))
+    text_col <- which(names(.data) == "text")
+    result <- corpus(.data$text, docvars = .data[, -text_col, drop = FALSE])
     return(result)
   }
 

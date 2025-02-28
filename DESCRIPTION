@@ -16,12 +16,14 @@ Authors@R: c(
   )
 Description: Support for linking LLM analysis with quanteda.
 License: GPL-3
+Depends:
+    R (>= 3.5.0)
 Encoding: UTF-8
-LazyData: true
 Imports: 
     quanteda,
     ellmer,
     dplyr,
+    rlang,
     stringr,
     tidyr
 Suggests: 
@@ -29,5 +31,5 @@ Suggests:
     testthat (>= 3.0.0),
     Rcpp
 Config/testthat/edition: 3
-Language: en-US
+Language: en-GB
 RoxygenNote: 7.3.2
