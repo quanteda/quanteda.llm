@@ -15,11 +15,9 @@
 #' @import dplyr
 #' @export
 #' @examples
-#' # Don't run
-#' #ai_summary <- ai_sum(speeches_split,
-#' #"splits",
-#' #"llama3.2",
-#' #100)
+#' \dontrun{
+#' #ai_summary <- ai_sum(corpus_split, "splits", "llama3.2", 100)
+#' }
 #'
 ai_sum <- function(.data, texts, model, length, strict = FALSE) {
   is_corpus <- inherits(.data, "corpus")

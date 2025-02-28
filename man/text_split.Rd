@@ -30,9 +30,8 @@ The split segments are stored as a new docvar in the input corpus or row in the 
 and a new index is created to keep track of the original document
 }
 \examples{
-# Don't run
 \dontrun{
-speeches_split <- text_split(speeches, "text", length_seq = 512)
+corpus_split <- text_split(corpus, "text", model="BERT")
 }
 
 }

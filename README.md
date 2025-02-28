@@ -66,67 +66,65 @@ pak::pak("quanteda/quanteda.llm")
 
 ``` r
 library(quanteda.llm)
-
-speeches_split <- text_split(speeches, "text", length_seq=2000) # split the text into sequences of 512 characters
-speeches_split <- speeches_split %>%
+corpus <- quanteda::data_corpus_inaugural
+corpus_split <- text_split(corpus, "text", model="BERT") # split the text into sequences of 512 characters as required by BERT
+corpus_split <- corpus_split %>%
   select(doc_id, splits, text_index)
-speeches_split %>% head()
-# A tibble: 6 × 3
-#  doc_id splits                                                                                                                                          text_index
-#   <chr>  <chr>                                                                                                                                                <int>
-#1 264    " Thanks, very much, Madam Deputy Speaker. Can I congratulate on your election as Deputy Speake…          1
-#2 264    "we updated our Nationally Determined Contribution under the Paris Agreement to reflect th…          2
-#3 264    "Passing this legislation sends a great message to the people of Australia that we are tak…          3
-#4 264    "as big and as significant as the Industrial Revolution. The Industrial Revolution was based u…          4
-#5 264    "when it came to the pandemic was that Australia needs to be more self-reliant. We need to be …          5
-#6 264    "debate in an academic journal. Australians in recent times have experienced first drought…          6
+corpus_split %>% head()
+# A tibble: 6 × 4
+#  doc_id          President  splits                                                 text_index
+#  <chr>           <chr>      <chr>                                                       <int>
+#1 1789-Washington Washington "Fellow-Citizens of the Senate and of the House of "            1
+#2 1789-Washington Washington "Representatives:\n\nAmong the vicissitudes incident "          2
+#3 1789-Washington Washington "to life no event could have filled me with greater"            3
+#4 1789-Washington Washington " anxieties than that of which the notification was"            4
+#5 1789-Washington Washington " transmitted by your order, and received on the 14"            5
+#6 1789-Washington Washington "th day of the present month. On the one hand, I wa"            6
 ```
 
 ### Using `ai_sum`
 
 ``` r
 library(quanteda.llm)
-ai_summary <- ai_sum(speeches_split, 
+ai_summary <- ai_sum(corpus_split, 
                      "splits", 
                      "llama3.2", 
                      100)
-ai_summary[1,3]
+ai_summary[5,5]
 # A tibble: 1 × 1
 #  summary                                                                                                                    
 #  <chr>                                                                                                                      
-#1 The new speaker speaks about the importance of listening to facts and science when it comes to climate change, emphasizing…
+#1 1 The author's official act in office is an invocation of God's blessing on the US government and its lead…
 ```
 
 ### Using `ai_qual`
 
 ``` r
 library(quanteda.llm)
-ai_qualies <- ai_qual(speeches_split, 
+ai_qualies <- ai_qual(corpus_split, 
                       "splits", 
                       "llama3.2", 
                       prompt = "Is this text leaning towards the political left? The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
 ai_qualies[3,4]
 # A tibble: 1 × 1
 #  assess                                                                                                                                                         
-#  <chr>                                                                                                                                                          
-#1 "This text leans towards the political left as it supports progressive policies such as taking action on climate change, committing to a net-zero target by 20…
+#  <chr>                                                                                                    
+1 "This text does not lean towards the political left. In fact, it is a passage from the inaugural address…
 ```
 
 ### Using `ai_quant`
 
 ``` r
 library(quanteda.llm)
-ai_quanties <- ai_quant(speeches_split, 
+ai_quanties <- ai_quant(corpus_split, 
                         "splits", 
                         "llama3.2", 
                         concept = "The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
 head(ai_quant)
-# A tibble: 5 × 3
+# A tibble: 3 × 5
 #  splits                                               text_index score
 #  <chr>                                                     <int> <dbl>
-#1 " Thanks, very much, Madam Deputy Speaker. Can I co"          1 0.34 
-#2 "ngratulate on your election as Deputy Speaker. Can"          2 0    
-#3 " I say to the previous speaker, who is not a bad b"          3 1    
-#4 "loke, but, for goodness sake, to speak about facts"          4 0.955
-#5 " when it comes to climate change. Wow. Yet, we sho"          5 0.5  
+#1 1789-Washington Washington "Fellow-Citizens of the Senate and of the House of Represent…          1  0.74
+#2 1789-Washington Washington "e asylum of my declining years  -  a retreat which was rend…          2  0.1 
+#3 1789-Washington Washington "dence one who (inheriting inferior endowments from nature a…          3  0   
 ```

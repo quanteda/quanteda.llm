@@ -28,10 +28,8 @@ Use the llm model to summarize a set of documents.
 The response is added as an additional docvar to the input data
 }
 \examples{
-# Don't run
-#ai_summary <- ai_sum(speeches_split,
-#"splits",
-#"llama3.2",
-#100)
+\dontrun{
+#ai_summary <- ai_sum(corpus_split, "splits", "llama3.2", 100)
+}
 
 }

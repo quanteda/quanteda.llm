@@ -15,11 +15,11 @@
 #' @import tidyr
 #' @import stringr
 #' @import quanteda
+#' @import purrr
 #' @export
 #' @examples
-#' # Don't run
 #' \dontrun{
-#' speeches_split <- text_split(speeches, "text", length_seq = 512)
+#' corpus_split <- text_split(corpus, "text", model="BERT")
 #' }
 #'
 text_split <- function(.data, texts, length_seq = NULL, model = NULL) {

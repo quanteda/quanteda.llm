@@ -29,6 +29,6 @@ The numerical scores for each text are added as an additional docvar/column to t
 \dontrun{
 concept = "The political left defined as groups which advocate for social equality,
            government intervention in the economy, and progressive policies."
-sai_quanties <- ai_quant(speeches_split, "splits", "llama3.2", concept)
+ai_quanties <- ai_quant(corpus_split, "splits", "llama3.2", concept)
 }
 }

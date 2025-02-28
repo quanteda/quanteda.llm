@@ -30,7 +30,7 @@ added as an additional column to the input data.
 prompt = "Is this text leaning towards the political left?
           The political left defined as groups which advocate for social equality,
           government intervention in the economy, and progressive policies."
-result <- ai_qual(speeches_split, "splits", "llama3.2", prompt)
+result <- ai_qual(corpus_split, "splits", "llama3.2", prompt)
 result
 }
 }
