@@ -11,6 +11,8 @@
 #' @name ai_sum
 #' @import ellmer
 #' @import quanteda
+#' @import stringr
+#' @import dplyr
 #' @export
 #' @examples
 #' # Don't run

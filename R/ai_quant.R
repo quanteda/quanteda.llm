@@ -10,6 +10,7 @@
 #' @name ai_quant
 #' @import ellmer
 #' @import quanteda
+#' @import dplyr
 #' @export
 #' @examples
 #' # Don't run

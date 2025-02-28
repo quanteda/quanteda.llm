@@ -29,6 +29,8 @@ The package includes the following functions:
 - `ai_qual`: Analyses documents in a corpus using an LLM and based on given instructions (simulating qualitative assessments)
 - `ai_quant`: Scores documents in a corpus using an LLM and based on given instructions
 
+More to follow.
+
 # Supported LLMs
 
 The package supports the following LLMs:

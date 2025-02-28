@@ -7,6 +7,7 @@
 #' @param length_seq the number of characters to include in each segment based on llm model requirements
 #' @param model the name of the llm model to use for splitting the documents,
 #' this is optional and can be used instead of length_seq to get the maximum length of the segments accepted by specific llm models
+#' # for a list of supported models see `llm_info`
 #'
 #' @return a data frame with the split segments stored as additional rows and a new index to keep track of the original document
 #' @name text_split
