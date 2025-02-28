@@ -5,6 +5,11 @@
 
 <!-- badges: start -->
 
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/quanteda.llm)](https://CRAN.R-project.org/package=quanteda.llm)
+[![R-CMD-check](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The **quanteda.llm** package makes it easy to use LLMs with
@@ -30,6 +35,8 @@ The package includes the following functions:
   given instructions (simulating qualitative assessments)
 - `ai_quant`: Scores documents in a corpus using an LLM and based on
   given instructions
+
+More to follow.
 
 # Supported LLMs
 
@@ -60,7 +67,7 @@ pak::pak("quanteda/quanteda.llm")
 ``` r
 library(quanteda.llm)
 
-speeches_split <- text_split(speeches, "text", length_seq=512) # split the text into sequences of 512 characters
+speeches_split <- text_split(speeches, "text", length_seq=2000) # split the text into sequences of 512 characters
 speeches_split <- speeches_split %>%
   select(doc_id, splits, text_index)
 speeches_split %>% head()
@@ -79,11 +86,11 @@ speeches_split %>% head()
 
 ``` r
 library(quanteda.llm)
-ai_qualies <- ai_sum(speeches_split, 
+ai_summary <- ai_sum(speeches_split, 
                      "splits", 
                      "llama3.2", 
                      100)
-ai_qualies[1,3]
+ai_summary[1,3]
 # A tibble: 1 × 1
 #  summary                                                                                                                    
 #  <chr>                                                                                                                      
