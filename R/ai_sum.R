@@ -1,86 +1,72 @@
 #' Summarize documents using a llm model
+#'
 #' Use the llm model to summarize a set of documents.
 #' The response is added as an additional docvar to the input data
-#' @param .data a data frame containing the documents to be summarized
-#' @param texts the name of the column in the data frame containing the documents to be summarized
-#' @param model a llm model object
-#' @param length the number of words to include in the summary
-#' @param strict a logical indicating whether the summary should be exactly `length` words, default is `FALSE`
-#'
-#' @return the input data frame with the document summaries stored as an additional column
-#' @name ai_sum
+#' @param .data a character or [quanteda::corpus] object containing the
+#'   documents to be summarized
+#' @param chat_fn function; a chat function from \pkg{ellmer}
+#' @param summary_length integer; the length in words to instruct the chat function
+#'   to return in the response
+#' @param verbose logical; output a progress indicator if `TRUE`
+#' @param ... additional arguments passed to `chat_fn`
+#' @return character; the response from the LLM with a length equal to the
+#'   number of input documents, with the elements named with the input element
+#'   names
 #' @import ellmer
-#' @import quanteda
-#' @import stringr
-#' @import dplyr
 #' @export
 #' @examples
 #' \dontrun{
-#' #ai_summary <- ai_sum(corpus_split, "splits", "llama3.2", 100)
+#' library(quanteda)
+#' summ1 <- ai_summarize(data_char_ukimmig2010, chat_fn = chat_ollama, model = "llama3.2")
+#' summ2 <- ai_summarize(data_corpus_inaugural[1:2], chat_fn = chat_openai,
+#'                 api_args = list(temperature = 0, seed = 42))
 #' }
-#'
-ai_sum <- function(.data, texts, model, length, strict = FALSE) {
-  is_corpus <- inherits(.data, "corpus")
+ai_summarize <- function(.data, chat_fn, ..., summary_length = 200L, verbose = TRUE) {
+  UseMethod("ai_summarize")
+}
 
-  if (is_corpus) {
-    docvars <- docvars(.data)
-    .data <- convert(.data, to = "data.frame")
-    .data <- bind_cols(.data, docvars)
-    texts <- "text"
+#' @export
+#' @importFrom glue glue
+ai_summarize.character <- function(.data, chat_fn, ..., summary_length = 200L, verbose = TRUE) {
+
+  args <- list(...)
+  if (!"system_prompt" %in% names(args)) {
+    args <- c(args, list(system_prompt = global_system_prompt))
+  }
+  if (!"model" %in% names(args) & identical(chat_fn, chat_ollama)) {
+    args <- c(args, list(model = "llama3.2"))
   }
 
-  # Check if .data is a data frame
-  if (!is.data.frame(.data)) {
-    stop(".data must be a data frame")
-  }
-
-  # Check if the texts column exists in the data frame
-  if (!texts %in% colnames(.data)) {
-    stop(paste("Column", texts, "not found in the data frame"))
-  }
-
-  # Initialize the chat model
-  chat <- chat_ollama(model = model)
-
-  # Define the type summary
   type_summary <- type_object(
     "Summary of the document.",
-    summary = type_string(paste("Summary of the text. Provide exactly", length, "words in the summary."))
+    summary = type_string(paste("Summary of the text. Summarize the text in approximately", summary_length, "words."))
   )
+  names <- names(.data)
 
-  # Initialize the new summary column
-  .data$summary <- NA
+  chat <- suppressMessages(do.call(chat_fn, args))
+  model <- chat$get_model()
 
-  # Loop through each document in the data frame
-  for (i in 1:nrow(.data)) {
-    # Extract the document text
-    doc_text <- .data[[texts]][i]
+  if (verbose)
+    message(glue("Calling {deparse(substitute(chat_fn))} ({model}):"))
 
-    # Extract the summary
-    data <- chat$extract_data(doc_text, type = type_summary)
-
-    # Post-process the summary to enforce the length restriction if strict is TRUE
-    if (strict) {
-      summary_words <- strsplit(data$summary, "\\s+")[[1]]
-      if (length(summary_words) > length) {
-        summary_words <- summary_words[1:length]
-      }
-      summary <- paste(summary_words, collapse = " ")
-    } else {
-      summary <- data$summary
+  result <- character(length(.data))
+  for (i in seq_along(.data)) {
+    if (verbose) {
+      message(glue("... processing: [{i}/{length(.data)}] {names[i]}"))
     }
 
-    # Store the summary in the new summary column
-    .data$summary[i] <- summary
+    if (i > 1)
+      suppressMessages(chat <- do.call(chat_fn, args))
+    result[i] <- chat$extract_data(.data[i], type = type_summary)
   }
 
-  # Convert back to corpus if the input was a corpus
-  if (is_corpus) {
-    text_col <- which(names(.data) == "text")
-    result <- corpus(.data$text, docvars = .data[, -text_col, drop = FALSE])
-    return(result)
-  }
+  if (verbose)
+    message(glue("Finished."))
 
-  # Return the modified data frame as output
-  return(.data)
+  # might be a list but should not be longer than one element each
+  stopifnot( max(lengths(result)) == 1)
+
+  result <- unlist(result)
+  names(result) <- names
+  result
 }

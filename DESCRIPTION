@@ -18,19 +18,20 @@ Description: Support for linking LLM analysis with quanteda.
 License: GPL-3
 Depends:
     R (>= 3.5.0)
-Encoding: UTF-8
+Remotes: 
+    github::quanteda/quanteda@corpus_chunk,
+    github::quanteda/quanteda.tidy
 Imports: 
     quanteda,
     ellmer,
     dplyr,
-    rlang,
-    purrr,
-    stringr,
-    tidyr
+    glue,
+    rlang
 Suggests: 
     spelling,
     testthat (>= 3.0.0),
     Rcpp
 Config/testthat/edition: 3
+Encoding: UTF-8
 Language: en-GB
 RoxygenNote: 7.3.2

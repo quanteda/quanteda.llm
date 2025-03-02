@@ -3,7 +3,7 @@ NULL
 
 ## globals
 
-llm_info <- list(
+context_max <- list(
   "GPT-3" = 2048,
   "GPT-3.5-turbo" = 4096,
   "GPT-4" = 8192,
@@ -14,3 +14,5 @@ llm_info <- list(
   "ALBERT" = 512,
   "llama3.2" = 2048
 )
+
+global_system_prompt = "You are a political expert tasked with reading the supplied documents carefully and objectively."
