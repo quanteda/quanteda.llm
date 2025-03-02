@@ -2,10 +2,7 @@
 % Please edit documentation in R/text_split.R
 \name{text_split}
 \alias{text_split}
-\title{Split documents into maximum length segments which the llm model accepts as input data
-Use the splitting to prepare the data for further llm processing
-The split segments are stored as a new docvar in the input corpus or row in the input data frame
-and a new index is created to keep track of the original document}
+\title{Split documents into smaller segments}
 \usage{
 text_split(.data, texts, length_seq = NULL, model = NULL)
 }
@@ -18,20 +15,21 @@ text_split(.data, texts, length_seq = NULL, model = NULL)
 
 \item{model}{the name of the llm model to use for splitting the documents,
 this is optional and can be used instead of length_seq to get the maximum length of the segments accepted by specific llm models
-# for a list of supported models see `llm_info`}
+# for a list of supported models see `context_max`}
 }
 \value{
 a data frame with the split segments stored as additional rows and a new index to keep track of the original document
 }
 \description{
-Split documents into maximum length segments which the llm model accepts as input data
-Use the splitting to prepare the data for further llm processing
-The split segments are stored as a new docvar in the input corpus or row in the input data frame
-and a new index is created to keep track of the original document
+Splits documents into the maximum length segments which the LLM model accepts
+as input data. Use the splitting to prepare the data for further llm
+processing.  The split segments are stored as a new docvar in the input corpus
+or row in the input data frame and a new index is created to keep track of
+the original document
 }
 \examples{
 \dontrun{
-corpus_split <- text_split(corpus, "text", model="BERT")
+corpus_split <- text_split(corpus, "text", model = "BERT")
 }
 
 }

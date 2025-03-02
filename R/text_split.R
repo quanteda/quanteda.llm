@@ -1,13 +1,16 @@
-#' Split documents into maximum length segments which the llm model accepts as input data
-#' Use the splitting to prepare the data for further llm processing
-#' The split segments are stored as a new docvar in the input corpus or row in the input data frame
-#'and a new index is created to keep track of the original document
+#' Split documents into smaller segments
+#'
+#' Splits documents into the maximum length segments which the LLM model accepts
+#' as input data. Use the splitting to prepare the data for further llm
+#' processing.  The split segments are stored as a new docvar in the input corpus
+#' or row in the input data frame and a new index is created to keep track of
+#' the original document
 #' @param .data a quanteda corpus or data frame containing the documents to be split
 #' @param texts the name of the column in the data frame containing the documents to be summarized
 #' @param length_seq the number of characters to include in each segment based on llm model requirements
 #' @param model the name of the llm model to use for splitting the documents,
 #' this is optional and can be used instead of length_seq to get the maximum length of the segments accepted by specific llm models
-#' # for a list of supported models see `llm_info`
+#' # for a list of supported models see `context_max`
 #'
 #' @return a data frame with the split segments stored as additional rows and a new index to keep track of the original document
 #' @name text_split
@@ -19,13 +22,13 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' corpus_split <- text_split(corpus, "text", model="BERT")
+#' corpus_split <- text_split(corpus, "text", model = "BERT")
 #' }
 #'
 text_split <- function(.data, texts, length_seq = NULL, model = NULL) {
   if (!is.null(model)) {
-    if (model %in% names(llm_info)) {
-      length_seq <- llm_info[[model]]
+    if (model %in% names(context_max)) {
+      length_seq <- context_max[[model]]
     } else {
       stop("Specified model is not in the list of known models.")
     }
