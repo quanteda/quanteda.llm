@@ -28,25 +28,43 @@ obejcts and variables.
 
 The package includes the following functions:
 
-- `ai_summarize`: Summarizes documents in a corpus using an LLM
-- `ai_qual`: Analyses documents in a corpus using an LLM and based on
-  given instructions (simulating qualitative assessments)
-- `ai_quant`: Scores documents in a corpus using an LLM and based on
-  given instructions
+- `ai_summarize`: Summarizes documents in a corpus.
+- `ai_label`: Labels documents in a corpus according to a content
+  analysis scheme.
+- `ai_score`: Scores documents in a corpus according to a defined scale.
 
 More to follow.
 
 # Supported LLMs
 
-The package supports the following LLMs:
+The package supports all LLMs currently available with the `ellmer`
+package, including:
 
-- **Ollama models**: To use the **quanteda.llm** functions first
-  download and install [Ollama](https://ollama.com/). Then install some
-  models either from the command line (e.g. with ollama pull llama3.2)
-  or within R using the `rollama` R package. The Ollama app must be
-  running for the models to be used.
+- Anthropic’s Claude: `chat_claude`.
+- AWS Bedrock: `chat_bedrock`.
+- Azure OpenAI: `chat_azure`.
+- Databricks: `chat_databricks`.
+- DeepSeek: `chat_deepseek`.
+- GitHub model marketplace: `chat_github`.
+- Google Gemini: `chat_gemini`.
+- Groq: `chat_groq`.
+- Ollama: `chat_ollama`.
+- OpenAI: `chat_openai`.
+- OpenRouter: `chat_openrouter`.
+- perplexity.ai: `chat_perplexity`.
+- Snowflake Cortex: `chat_snowflake` and `chat_cortex_analyst`.
+- VLLM: `chat_vllm`.
 
-- More to follow.
+For authentication and usage of each of these LLMs, please refer to the
+respective `ellmer` documentation
+[here](https://ellmer.tidyverse.org/reference/index.html). **For
+example,** to use the `chat_ollama` models, first download and install
+[Ollama](https://ollama.com/). Then install some models either from the
+command line (e.g. with ollama pull llama3.1) or within R using the
+`rollama` package. The Ollama app must be running for the models to be
+used. To use the `chat_openai` models, you would need to sign up for an
+API key from OpenAI which you can save in your `.Renviron` file as
+`OPENAI_API_KEY`.
 
 ## Installation
 
@@ -63,41 +81,44 @@ pak::pak("quanteda/quanteda.llm")
 ### Using `ai_summarize`
 
 ``` r
+library(quanteda)
 library(quanteda.llm)
-ai_summary <- ai_summarize(corpus_split, "splits", "llama3.2", 100)
-ai_summary[5,5]
-# A tibble: 1 × 1
-#  summary                                                                                                                    
-#  <chr>                                                                                                                      
-#1 1 The author's official act in office is an invocation of God's blessing on the US government and its lead…
+library(quanteda.tidy)
+corpus <- quanteda::data_corpus_inaugural %>%
+  quanteda.tidy::mutate(llm_sum = ai_summarize(text, chat_fn = chat_ollama, model = "llama3.2"))
+# llm_sum is created as a new docvar in the corpus
 ```
 
-### Using `ai_qual`
+### Using `ai_label`
 
 ``` r
+library(quanteda)
 library(quanteda.llm)
-result <- ai_qual(corpus_split, "splits", "llama3.2", 
-                      prompt = "Is this text leaning towards the political left? The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
-result[3,4]
-# A tibble: 1 × 1
-#  assess                                                                                                                                                         
-#  <chr>                                                                                                    
-1 "This text does not lean towards the political left. In fact, it is a passage from the inaugural address…
+library(quanteda.tidy)
+label = "Label the following document based on how much it aligns with the political left, center, or right. 
+         The political left is defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.
+         The political center typically supports a balance between progressive and conservative views, favoring moderate policies and compromise. 
+         The political right generally advocates for individualism,                  
+         free-market capitalism, and traditional values."
+corpus <- quanteda::data_corpus_inaugural %>%
+  quanteda.tidy::mutate(llm_label = ai_label(text, chat_fn = chat_ollama, model = "llama3.2", label = label))
+# llm_label is created as a new docvar in the corpus
 ```
 
-### Using `ai_quant`
+### Using `ai_score`
 
 ``` r
+library(quanteda)
 library(quanteda.llm)
-result <- ai_quant(corpus_split, 
-                        "splits", 
-                        "llama3.2", 
-                        concept = "The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
-head(result)
-# A tibble: 3 × 5
-#  splits                                               text_index score
-#  <chr>                                                     <int> <dbl>
-#1 1789-Washington Washington "Fellow-Citizens of the Senate and of the House of Represent…          1  0.74
-#2 1789-Washington Washington "e asylum of my declining years  -  a retreat which was rend…          2  0.1 
-#3 1789-Washington Washington "dence one who (inheriting inferior endowments from nature a…          3  0   
+library(quanteda.tidy)
+scale = "Score the following document on a scale of how much it aligns
+         with the political left. The political left is defined as groups which 
+         advocate for social equality, government intervention in the economy, 
+         and progressive policies. Use the following metrics: 
+         SCORING METRIC:
+         1 : extremely left
+         0 : not at all left"
+corpus <- quanteda::data_corpus_inaugural %>%
+  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_ollama, model = "llama3.2", scale = scale))
+# llm_score is created as a new docvar in the corpus
 ```

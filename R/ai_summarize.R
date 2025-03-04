@@ -1,10 +1,11 @@
-#' Summarize documents using a llm model
+#' Summarize documents in a corpus
 #'
 #' Use the llm model to summarize a set of documents.
 #' The response is added as an additional docvar to the input data
 #' @param .data a character or [quanteda::corpus] object containing the
 #'   documents to be summarized
 #' @param chat_fn function; a chat function from \pkg{ellmer}
+#' @param model a llm model object
 #' @param summary_length integer; the length in words to instruct the chat function
 #'   to return in the response
 #' @param verbose logical; output a progress indicator if `TRUE`
