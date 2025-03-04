@@ -28,9 +28,7 @@ obejcts and variables.
 
 The package includes the following functions:
 
-- `text_split`: Splits documents in a corpus into sequences which LLMs
-  can process
-- `ai_sum`: Summarises documents in a corpus using an LLM
+- `ai_summarize`: Summarizes documents in a corpus using an LLM
 - `ai_qual`: Analyses documents in a corpus using an LLM and based on
   given instructions (simulating qualitative assessments)
 - `ai_quant`: Scores documents in a corpus using an LLM and based on
@@ -62,34 +60,11 @@ pak::pak("quanteda/quanteda.llm")
 
 ## Examples
 
-### Using `text_split`
+### Using `ai_summarize`
 
 ``` r
 library(quanteda.llm)
-corpus <- quanteda::data_corpus_inaugural
-corpus_split <- text_split(corpus, "text", model="BERT") # split the text into sequences of 512 characters as required by BERT
-corpus_split <- corpus_split %>%
-  select(doc_id, splits, text_index)
-corpus_split %>% head()
-# A tibble: 6 × 4
-#  doc_id          President  splits                                                 text_index
-#  <chr>           <chr>      <chr>                                                       <int>
-#1 1789-Washington Washington "Fellow-Citizens of the Senate and of the House of "            1
-#2 1789-Washington Washington "Representatives:\n\nAmong the vicissitudes incident "          2
-#3 1789-Washington Washington "to life no event could have filled me with greater"            3
-#4 1789-Washington Washington " anxieties than that of which the notification was"            4
-#5 1789-Washington Washington " transmitted by your order, and received on the 14"            5
-#6 1789-Washington Washington "th day of the present month. On the one hand, I wa"            6
-```
-
-### Using `ai_sum`
-
-``` r
-library(quanteda.llm)
-ai_summary <- ai_sum(corpus_split, 
-                     "splits", 
-                     "llama3.2", 
-                     100)
+ai_summary <- ai_summarize(corpus_split, "splits", "llama3.2", 100)
 ai_summary[5,5]
 # A tibble: 1 × 1
 #  summary                                                                                                                    
@@ -101,11 +76,9 @@ ai_summary[5,5]
 
 ``` r
 library(quanteda.llm)
-ai_qualies <- ai_qual(corpus_split, 
-                      "splits", 
-                      "llama3.2", 
+result <- ai_qual(corpus_split, "splits", "llama3.2", 
                       prompt = "Is this text leaning towards the political left? The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
-ai_qualies[3,4]
+result[3,4]
 # A tibble: 1 × 1
 #  assess                                                                                                                                                         
 #  <chr>                                                                                                    
@@ -116,11 +89,11 @@ ai_qualies[3,4]
 
 ``` r
 library(quanteda.llm)
-ai_quanties <- ai_quant(corpus_split, 
+result <- ai_quant(corpus_split, 
                         "splits", 
                         "llama3.2", 
                         concept = "The political left defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.")
-head(ai_quant)
+head(result)
 # A tibble: 3 × 5
 #  splits                                               text_index score
 #  <chr>                                                     <int> <dbl>

@@ -14,9 +14,9 @@
 #' \dontrun{
 #' concept = "The political left defined as groups which advocate for social equality,
 #'            government intervention in the economy, and progressive policies."
-#' ai_quanties <- ai_quant(corpus_split, "splits", "llama3.2", concept)
+#' result <- ai_quant(corpus_split, "splits", "llama3.2", concept)
+#' result
 #' }
-# Define the ai_quant function
 ai_quant <- function(.data, texts, model, concept) {
   is_corpus <- inherits(.data, "corpus")
 
