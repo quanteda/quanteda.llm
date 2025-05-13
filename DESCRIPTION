@@ -19,7 +19,6 @@ License: GPL-3
 Depends:
     R (>= 3.5.0)
 Remotes: 
-    github::quanteda/quanteda@corpus_chunk,
     github::quanteda/quanteda.tidy
 Imports: 
     quanteda,
