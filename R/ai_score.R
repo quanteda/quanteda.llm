@@ -3,7 +3,7 @@
 #' Use the llm model to score a set of documents.
 #' The numerical scores for each text are added as an additional docvar to the input data
 #' @param .data a character or [quanteda::corpus] object containing the
-#'   documents to be summarized
+#'   documents to be scored
 #' @param chat_fn function; a chat function from \pkg{ellmer}
 #' @param model a llm model object
 #' @param scale the defined scale question to generate a numeric answer - be as specific as possible

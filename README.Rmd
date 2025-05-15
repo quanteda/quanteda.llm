@@ -30,6 +30,7 @@ The package includes the following functions:
 - `ai_summarize`: Summarizes documents in a corpus.
 - `ai_label`: Labels documents in a corpus according to a content analysis scheme.
 - `ai_score`: Scores documents in a corpus according to a defined scale.
+- `ai_validate`: Starts an interactive app to manually validate the LLM-generated summaries, labels or scores.
 
 More to follow.
 
@@ -105,4 +106,26 @@ scale = "Score the following document on a scale of how much it aligns
 corpus <- quanteda::data_corpus_inaugural %>%
   quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_ollama, model = "llama3.2", scale = scale))
 # llm_score is created as a new docvar in the corpus
+```
+
+### Using `ai_validate`
+
+```{.r}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+scale = "Score the following document on a scale of how much it aligns
+         with the political left. The political left is defined as groups which 
+         advocate for social equality, government intervention in the economy, 
+         and progressive policies. Use the following metrics: 
+         SCORING METRIC:
+         1 : extremely left
+         0 : not at all left"
+corpus <- quanteda::data_corpus_inaugural %>%
+  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_ollama, model = "llama3.2", scale = scale))
+# llm_score is created as a new docvar in the corpus
+# Start the interactive app to validate the LLM-generated scores
+corpus <- corpus %>%
+  quanteda.tidy::mutate(validated = ai_validate(text, llm_score))
+# validated is created as a new docvar in the corpus with all non-validated scores set to NA
 ```

@@ -25,7 +25,8 @@ Imports:
     ellmer,
     dplyr,
     glue,
-    rlang
+    rlang,
+    shiny
 Suggests: 
     spelling,
     testthat (>= 3.0.0),

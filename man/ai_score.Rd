@@ -8,7 +8,7 @@ ai_score(.data, chat_fn, ..., scale, verbose = TRUE)
 }
 \arguments{
 \item{.data}{a character or [quanteda::corpus] object containing the
-documents to be summarized}
+documents to be scored}
 
 \item{chat_fn}{function; a chat function from \pkg{ellmer}}
 
