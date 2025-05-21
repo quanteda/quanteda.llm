@@ -23,8 +23,9 @@
 #' validate2 <- ai_validate(data_corpus_inaugural[1:2], llm_output = summ2, verbose = TRUE)
 #' }
 #' @export
-ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
+ai_validate <- function(text, llm_output, save_file = "validation_progress.rds", ..., verbose = TRUE) {
   library(shiny)
+  library(jsonlite)
   
   # Ensure inputs are character vectors
   if (!is.character(text)) {
@@ -41,10 +42,19 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
   
   # Wrap text and llm_output to a fixed width
   text <- wrap_text(text, width = 80)
-  llm_output <- wrap_text(llm_output, width = 80)
   
-  # Initialize the validated results as a regular character vector
-  validated_results <- rep("N/A", length(text))  # Default to "N/A"
+  # Initialize the validated results and manual extractions
+  if (file.exists(save_file)) {
+    # Load progress if the save file exists
+    progress <- readRDS(save_file)
+    validated_results <- progress$comments
+    examples <- progress$examples
+    if (verbose) message("Loaded progress from file.")
+  } else {
+    # Start fresh if no save file exists
+    validated_results <- rep("N/A", length(text))  # Start with "N/A"
+    examples <- rep("", length(text))              # Start with empty strings
+  }
   
   if (verbose) {
     message("Launching Shiny app for manual validation...")
@@ -108,7 +118,7 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
             color: #4d004d;
             padding: 10px;
             height: auto; /* Adjust height dynamically */
-            width: 800px; /* Fixed width */
+            width: auto; /* Adjust height dynamically */
             white-space: pre-wrap; /* Preserve line breaks */
             word-wrap: break-word; /* Break long words */
             overflow-wrap: break-word; /* Ensure long words break */
@@ -116,6 +126,15 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
             line-height: 1; /* Single-spacing */
             border: none; /* No border or frame */
           }
+        ")),
+        # Add JavaScript to capture highlighted text
+        tags$script(HTML("
+          document.addEventListener('mouseup', function() {
+            var selectedText = window.getSelection().toString();
+            if (selectedText.length > 0) {
+              Shiny.setInputValue('highlighted_text', selectedText, {priority: 'event'});
+            }
+          });
         "))
       ),
       div(class = "title-panel", h1("Manual Validation")),
@@ -124,9 +143,13 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
           div(class = "sidebar",
               h4("LLM Output:"),
               textOutput("llm_output_sidebar"),  # Dynamically display the current LLM output
+              actionButton("prev_text", "Previous Text", class = "btn"),  # Button to move to the previous text
               actionButton("next_text", "Next Text", class = "btn"),  # Button to move to the next text
-              textAreaInput("comments", "Comments:", "", width = "100%", height = "100px"),  # Comments field
-              textOutput("status")
+              textAreaInput("comments", "Comments:", "N/A", width = "100%", height = "100px"),  # Comments field starts with "N/A"
+              textOutput("status"),
+              h5("Highlighted examples:"),
+              verbatimTextOutput("highlighted_text_display"),  # Display highlighted text
+              h6("Examples highlighted in the text are automatically saved.")
           )
         ),
         mainPanel(
@@ -156,7 +179,32 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
         llm_output[current_index()]
       })
       
-      # Automatically save the comments and move to the next text
+      # Update the comments field and highlighted examples when navigating
+      observe({
+        # Update the comments field
+        updateTextAreaInput(session, "comments", value = validated_results[current_index()])
+        
+        # Update the displayed highlighted examples
+        output$highlighted_text_display <- renderText({
+          examples[current_index()]
+        })
+      })
+      
+      # Save highlighted text (append to existing highlights)
+      observeEvent(input$highlighted_text, {
+        # Append the new highlight to the existing highlights
+        examples[current_index()] <<- paste(
+          examples[current_index()],
+          input$highlighted_text,
+          sep = " | "
+        )
+        # Update the displayed highlighted text
+        output$highlighted_text_display <- renderText({
+          examples[current_index()]
+        })
+      })
+      
+      # Save comments and move to the next text
       observeEvent(input$next_text, {
         # Save the current comments
         validated_results[current_index()] <<- input$comments
@@ -164,10 +212,23 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
         # Move to the next text
         if (current_index() < length(text)) {
           current_index(current_index() + 1)
-          updateTextAreaInput(session, "comments", value = validated_results[current_index()])
-          output$status <- renderText("Comments saved and moved to the next text.")
+          output$status <- renderText("Comments are saved by clicking previous/next text.")
         } else {
-          output$status <- renderText("No more texts to validate.")
+          output$status <- renderText("You are at the last text.")
+        }
+      })
+      
+      # Save comments and move to the previous text
+      observeEvent(input$prev_text, {
+        # Save the current comments
+        validated_results[current_index()] <<- input$comments
+        
+        # Move to the previous text
+        if (current_index() > 1) {
+          current_index(current_index() - 1)
+          output$status <- renderText("Comments are saved by clicking previous/next.")
+        } else {
+          output$status <- renderText("You are at the first text.")
         }
       })
     }
@@ -177,9 +238,23 @@ ai_validate <- function(text, llm_output, ..., verbose = TRUE) {
   runApp(app)
   
   if (verbose) {
-    message("Finished validation.")
+    # Calculate the summary
+    validated_count <- sum(validated_results != "N/A")
+    remaining_count <- sum(validated_results == "N/A")
+    
+    # Save progress to file
+    saveRDS(list(comments = validated_results, examples = examples), save_file)
+    message(sprintf(
+      "Finished validation. %d texts validated, %d texts remaining. Progress saved to '%s'.",
+      validated_count,
+      remaining_count,
+      save_file
+    ))
   }
   
-  # Return the validated results
-  return(validated_results)
+  # Return a data frame without the text column
+  return(data.frame(
+    comments = validated_results,  # Single column for comments
+    examples = examples            # Single column for highlighted examples
+  ))
 }

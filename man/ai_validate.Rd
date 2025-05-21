@@ -5,7 +5,13 @@
 \title{Starts an interactive app to manually validate the
 documents in a corpus which were summarized, labelled, or scored by an LLM.}
 \usage{
-ai_validate(text, llm_output, ..., verbose = TRUE)
+ai_validate(
+  text,
+  llm_output,
+  save_file = "validation_progress.rds",
+  ...,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{llm_output}{a character string; the name of the LLM output column which contains
