@@ -127,10 +127,14 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
             border: none; /* No border or frame */
           }
         ")),
-        # Add JavaScript to capture highlighted text
+        # Add JavaScript to capture highlighted text only in the main text area
         tags$script(HTML("
-          document.addEventListener('mouseup', function() {
-            var selectedText = window.getSelection().toString();
+          document.addEventListener('mouseup', function(event) {
+            var selectedText = '';
+            // Check if the selection is within the main text area
+            if (event.target.closest('.text-box')) {
+              selectedText = window.getSelection().toString();
+            }
             if (selectedText.length > 0) {
               Shiny.setInputValue('highlighted_text', selectedText, {priority: 'event'});
             }
