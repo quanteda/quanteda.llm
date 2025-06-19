@@ -7,6 +7,7 @@
 #' @param chat_fn function; a chat function from \pkg{ellmer}
 #' @param model a llm model object
 #' @param scale the defined scale question to generate a numeric answer - be as specific as possible
+#' @param few_shot_examples a data frame with two columns: `text` and `score`, providing examples of how to score documents. This is optional but can help the model understand the scoring criteria better.
 #' @param verbose logical; output a progress indicator if `TRUE`
 #' @param ... additional arguments passed to `chat_fn`
 #'
@@ -30,27 +31,54 @@
 #' score2 <- ai_score(data_char_ukimmig2010, chat_fn = chat_openai,
 #'                api_args = list(temperature = 0, seed = 42), scale = scale)
 #' }
-ai_score <- function(.data, chat_fn, ..., scale, verbose = TRUE) {
+#' @export
+ai_score <- function(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbose = TRUE) {
   if (is.character(.data)) {
-    return(ai_score_character(.data, chat_fn, ..., scale = scale, verbose = verbose))
+    return(ai_score_character(.data, chat_fn, ..., scale = scale, few_shot_examples = few_shot_examples, verbose = verbose))
   } else {
     stop("Unsupported data type for ai_score")
   }
 }
+
 #' @export
 #' @importFrom glue glue
-ai_score_character <- function(.data, chat_fn, ..., scale, verbose = TRUE) {
+ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbose = TRUE) {
   args <- list(...)
+  
+  # Add a system prompt if not provided
   if (!"system_prompt" %in% names(args)) {
-    args <- c(args, list(system_prompt = global_system_prompt))
+    # Include few-shot examples in the system prompt if provided
+    if (!is.null(few_shot_examples)) {
+      if (!is.data.frame(few_shot_examples) || !all(c("text", "score") %in% colnames(few_shot_examples))) {
+        stop("`few_shot_examples` must be a data frame with columns 'text' and 'score'.")
+      }
+      
+      # Format the few-shot examples
+      examples_text <- paste(
+        "Here are some examples for scoring:",
+        paste(
+          apply(few_shot_examples, 1, function(row) {
+            glue("Document: '{row['text']}' Score: {row['score']}")
+          }),
+          collapse = "\n\n"
+        ),
+        sep = "\n\n"
+      )
+      
+      args <- c(args, list(system_prompt = paste(global_system_prompt, examples_text, sep = "\n\n")))
+    } else {
+      args <- c(args, list(system_prompt = global_system_prompt))
+    }
   }
+  
+  # Add a default model if not provided and using chat_ollama
   if (!"model" %in% names(args) & identical(chat_fn, chat_ollama)) {
     args <- c(args, list(model = "llama3.2"))
   }
   
   type_score <- type_object(
     "Score of the document.",
-    score = type_number(paste(scale, "Use the following metrics: 1 for full alignment, 0 for no alignment. The score should be between 0.0 and 1.0."))
+    score = type_number(paste(scale))
   )
   names <- names(.data)
   
@@ -80,7 +108,6 @@ ai_score_character <- function(.data, chat_fn, ..., scale, verbose = TRUE) {
   if (is.na(score) || score < 0.0 || score > 1.0) {
     score <- NA  # Handle out-of-range or invalid scores
   }
-  
   
   names(result) <- names
   result

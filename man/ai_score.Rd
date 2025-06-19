@@ -4,7 +4,7 @@
 \alias{ai_score}
 \title{Scores documents in a corpus according to a defined scale}
 \usage{
-ai_score(.data, chat_fn, ..., scale, verbose = TRUE)
+ai_score(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbose = TRUE)
 }
 \arguments{
 \item{.data}{a character or [quanteda::corpus] object containing the
@@ -15,6 +15,8 @@ documents to be scored}
 \item{...}{additional arguments passed to `chat_fn`}
 
 \item{scale}{the defined scale question to generate a numeric answer - be as specific as possible}
+
+\item{few_shot_examples}{a data frame with two columns: `text` and `score`, providing examples of how to score documents. This is optional but can help the model understand the scoring criteria better.}
 
 \item{verbose}{logical; output a progress indicator if `TRUE`}
 
