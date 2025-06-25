@@ -77,7 +77,8 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
   }
   
   type_score <- type_object(
-    "Score of the document.",
+    "Score of the document. DO NOT provide a score which is not in the specified range. 
+    Provide only full numbers, no decimals or fractions", 
     score = type_number(paste(scale))
   )
   names <- names(.data)
@@ -86,28 +87,23 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
   model <- chat$get_model()
   
   if (verbose)
-    message(glue("Calling {deparse(substitute(chat_fn))} ({model}):"))
+    cat("Calling", deparse(substitute(chat_fn)), "(", model, "):\n")
+ 
   
   result <- numeric(length(.data))
   for (i in seq_along(.data)) {
     if (verbose) {
-      message(glue("... processing: [{i}/{length(.data)}] {names[i]}"))
+      cat("... processing:", "[", i, "/", length(.data), "]", names[i], "\n")
     }
     
     if (i > 1)
       suppressMessages(chat <- do.call(chat_fn, args))
-    data <- chat$extract_data(.data[i], type = type_score)
+    data <- chat$chat_structured(.data[i], type = type_score)
     result[i] <- as.numeric(data$score)
   }
   
   if (verbose)
     message(glue("Finished."))
-  
-  # Ensure the score is numeric and within the range [0.0, 1.0]
-  score <- as.numeric(data$score)
-  if (is.na(score) || score < 0.0 || score > 1.0) {
-    score <- NA  # Handle out-of-range or invalid scores
-  }
   
   names(result) <- names
   result

@@ -48,17 +48,17 @@ ai_summarize.character <- function(.data, chat_fn, ..., summary_length = 200L, v
   model <- chat$get_model()
 
   if (verbose)
-    message(glue("Calling {deparse(substitute(chat_fn))} ({model}):"))
+    cat("Calling", deparse(substitute(chat_fn)), "(", model, "):\n")
 
   result <- character(length(.data))
   for (i in seq_along(.data)) {
     if (verbose) {
-      message(glue("... processing: [{i}/{length(.data)}] {names[i]}"))
+      cat("... processing:", "[", i, "/", length(.data), "]", names[i], "\n")
     }
 
     if (i > 1)
       suppressMessages(chat <- do.call(chat_fn, args))
-    result[i] <- chat$extract_data(.data[i], type = type_summary)
+    result[i] <- chat$chat_structured(.data[i], type = type_summary)
   }
 
   if (verbose)

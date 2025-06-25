@@ -29,8 +29,8 @@ obejcts and variables.
 The package includes the following functions:
 
 - `ai_summarize`: Summarizes documents in a corpus.
-- `ai_label`: Labels documents in a corpus according to a content
-  analysis scheme.
+- `ai_relevance`: Classifies documents in a corpus according to a set of
+  topics and assesses the relevance of each document to each topic.
 - `ai_score`: Scores documents in a corpus according to a defined scale.
 - `ai_validate`: Starts an interactive app to manually validate the
   LLM-generated summaries, labels or scores.
@@ -62,7 +62,7 @@ respective `ellmer` documentation
 [here](https://ellmer.tidyverse.org/reference/index.html). **For
 example,** to use the `chat_ollama` models, first download and install
 [Ollama](https://ollama.com/). Then install some models either from the
-command line (e.g. with ollama pull llama3.1) or within R using the
+command line (e.g. with ollama pull llama3.1) or within R using the
 `rollama` package. The Ollama app must be running for the models to be
 used. To use the `chat_openai` models, you would need to sign up for an
 API key from OpenAI which you can save in your `.Renviron` file as
@@ -85,26 +85,25 @@ pak::pak("quanteda/quanteda.llm")
 ``` r
 library(quanteda)
 library(quanteda.llm)
+#pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 corpus <- quanteda::data_corpus_inaugural %>%
   quanteda.tidy::mutate(llm_sum = ai_summarize(text, chat_fn = chat_ollama, model = "llama3.2"))
 # llm_sum is created as a new docvar in the corpus
 ```
 
-### Using `ai_label`
+### Using `ai_relevance`
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
+#pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
-label = "Label the following document based on how much it aligns with the political left, center, or right. 
-         The political left is defined as groups which advocate for social equality, government intervention in the economy, and progressive policies.
-         The political center typically supports a balance between progressive and conservative views, favoring moderate policies and compromise. 
-         The political right generally advocates for individualism,                  
-         free-market capitalism, and traditional values."
+topics = c("Politics", "Sports", "Technology", "Entertainment", "Business", "Other")
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_label = ai_label(text, chat_fn = chat_ollama, model = "llama3.2", label = label))
-# llm_label is created as a new docvar in the corpus
+  quanteda.tidy::mutate(llm_relevance <- ai_relevance(text, 
+  chat_fn = chat_ollama, model = "llama3.2", topics = topics))
+# llm_relevance is created as a new docvar in the corpus
 ```
 
 ### Using `ai_score`
@@ -112,6 +111,7 @@ corpus <- quanteda::data_corpus_inaugural %>%
 ``` r
 library(quanteda)
 library(quanteda.llm)
+#pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 scale = "Score the following document on a scale of how much it aligns
          with the political left. The political left is defined as groups which 
@@ -130,6 +130,7 @@ corpus <- quanteda::data_corpus_inaugural %>%
 ``` r
 library(quanteda)
 library(quanteda.llm)
+#pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 scale = "Score the following document on a scale of how much it aligns
          with the political left. The political left is defined as groups which 
