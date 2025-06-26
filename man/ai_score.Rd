@@ -16,11 +16,14 @@ documents to be scored}
 
 \item{scale}{the defined scale question to generate a numeric answer - be as specific as possible}
 
-\item{few_shot_examples}{a data frame with two columns: `text` and `score`, providing examples of how to score documents. This is optional but can help the model understand the scoring criteria better.}
+\item{few_shot_examples}{a data frame with two columns: `text` and `score`, providing examples of how to score documents. 
+This is optional but can help the model understand the scoring criteria better.}
 
 \item{verbose}{logical; output a progress indicator if `TRUE`}
 
 \item{model}{a llm model object}
+
+\item{evidence}{logical; if `TRUE`, the model will return evidence supporting the score}
 }
 \value{
 character; the response from the LLM with a length equal to the

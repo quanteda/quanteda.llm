@@ -125,8 +125,10 @@ scale = "Score the following document on a scale of how much it aligns
          0 : not at all left"
 corpus <- quanteda::data_corpus_inaugural %>%
   quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_openai, model = "gpt-4o", 
-  api_args = list(temperature = 0, seed = 42), scale = scale))
+  api_args = list(temperature = 0, seed = 42), scale = scale, evidence = TRUE))
 # llm_score is created as a new docvar in the corpus
+# evidence is created as a new docvar in the corpus with the LLM's reasoning
+# `few_shot_examples` can be used to provide a labelled dataset with examples of the scoring scale
 ```
 
 ### Using `ai_validate`

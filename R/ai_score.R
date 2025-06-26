@@ -7,7 +7,9 @@
 #' @param chat_fn function; a chat function from \pkg{ellmer}
 #' @param model a llm model object
 #' @param scale the defined scale question to generate a numeric answer - be as specific as possible
-#' @param few_shot_examples a data frame with two columns: `text` and `score`, providing examples of how to score documents. This is optional but can help the model understand the scoring criteria better.
+#' @param few_shot_examples a data frame with two columns: `text` and `score`, providing examples of how to score documents. 
+#' This is optional but can help the model understand the scoring criteria better.
+#' @param evidence logical; if `TRUE`, the model will return evidence supporting the score
 #' @param verbose logical; output a progress indicator if `TRUE`
 #' @param ... additional arguments passed to `chat_fn`
 #'
@@ -42,7 +44,7 @@ ai_score <- function(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbo
 
 #' @export
 #' @importFrom glue glue
-ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbose = TRUE) {
+ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = NULL, verbose = TRUE, evidence = FALSE) {
   args <- list(...)
   
   # Add a system prompt if not provided
@@ -77,9 +79,9 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
   }
   
   type_score <- type_object(
-    "Score of the document. DO NOT provide a score which is not in the specified range. 
-    Provide only full numbers, no decimals or fractions", 
-    score = type_number(paste(scale))
+    "Score of the document. DO NOT provide a score which is not in the given range of the scoring metric.", 
+    score = type_integer(paste(scale)),
+    evidence = type_string("Evidence supporting the score.")
   )
   names <- names(.data)
   
@@ -88,9 +90,8 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
   
   if (verbose)
     cat("Calling", deparse(substitute(chat_fn)), "(", model, "):\n")
- 
   
-  result <- numeric(length(.data))
+  result <- vector("list", length(.data))
   for (i in seq_along(.data)) {
     if (verbose) {
       cat("... processing:", "[", i, "/", length(.data), "]", names[i], "\n")
@@ -99,12 +100,21 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
     if (i > 1)
       suppressMessages(chat <- do.call(chat_fn, args))
     data <- chat$chat_structured(.data[i], type = type_score)
-    result[i] <- as.numeric(data$score)
+    
+    if (evidence) {
+      result[[i]] <- list(score = as.numeric(data$score), evidence = data$evidence)
+    } else {
+      result[[i]] <- as.numeric(data$score)
+    }
   }
   
   if (verbose)
     message(glue("Finished."))
   
   names(result) <- names
-  result
+  if (evidence) {
+    return(do.call(rbind, lapply(result, as.data.frame)))
+  } else {
+    return(unlist(result))
+  }
 }
