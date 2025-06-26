@@ -72,8 +72,8 @@ ai_score_character <- function(.data, chat_fn, ..., scale, few_shot_examples = N
   }
   
   # Add a default model if not provided and using chat_ollama
-  if (!"model" %in% names(args) & identical(chat_fn, chat_ollama)) {
-    args <- c(args, list(model = "llama3.2"))
+  if (!"model" %in% names(args) & identical(chat_fn, chat_openai)) {
+    args <- c(args, list(model = "gpt-4o"))
   }
   
   type_score <- type_object(

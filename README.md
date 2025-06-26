@@ -88,7 +88,9 @@ library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_sum = ai_summarize(text, chat_fn = chat_ollama, model = "llama3.2"))
+  quanteda.tidy::mutate(llm_sum = ai_summarize(text, 
+  chat_fn = chat_openai, model = "gpt-4o"),
+  api_args = list(temperature = 0, seed = 42))
 # llm_sum is created as a new docvar in the corpus
 ```
 
@@ -102,7 +104,8 @@ library(quanteda.tidy)
 topics = c("Politics", "Sports", "Technology", "Entertainment", "Business", "Other")
 corpus <- quanteda::data_corpus_inaugural %>%
   quanteda.tidy::mutate(llm_relevance <- ai_relevance(text, 
-  chat_fn = chat_ollama, model = "llama3.2", topics = topics))
+  chat_fn = chat_openai, model = "gpt-4o", 
+  api_args = list(temperature = 0, seed = 42), topics = topics))
 # llm_relevance is created as a new docvar in the corpus
 ```
 
@@ -121,7 +124,8 @@ scale = "Score the following document on a scale of how much it aligns
          1 : extremely left
          0 : not at all left"
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_ollama, model = "llama3.2", scale = scale))
+  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_openai, model = "gpt-4o", 
+  api_args = list(temperature = 0, seed = 42), scale = scale))
 # llm_score is created as a new docvar in the corpus
 ```
 
@@ -140,7 +144,8 @@ scale = "Score the following document on a scale of how much it aligns
          1 : extremely left
          0 : not at all left"
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_ollama, model = "llama3.2", scale = scale))
+  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_openai, model = "gpt-4o", 
+  api_args = list(temperature = 0, seed = 42), scale = scale))
 # llm_score is created as a new docvar in the corpus
 # Start the interactive app to validate the LLM-generated scores
 corpus <- corpus %>%

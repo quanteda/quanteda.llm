@@ -34,8 +34,8 @@ ai_summarize.character <- function(.data, chat_fn, ..., summary_length = 200L, v
   if (!"system_prompt" %in% names(args)) {
     args <- c(args, list(system_prompt = global_system_prompt))
   }
-  if (!"model" %in% names(args) & identical(chat_fn, chat_ollama)) {
-    args <- c(args, list(model = "llama3.2"))
+  if (!"model" %in% names(args) & identical(chat_fn, chat_openai)) {
+    args <- c(args, list(model = "gpt-4o"))
   }
 
   type_summary <- type_object(

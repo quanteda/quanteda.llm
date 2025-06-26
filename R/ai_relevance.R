@@ -35,8 +35,8 @@ ai_relevance.character <- function(.data, chat_fn, ..., topics, verbose = TRUE) 
   if (!"system_prompt" %in% names(args)) {
     args <- c(args, list(system_prompt = global_system_prompt))
   }
-  if (!"model" %in% names(args) & identical(chat_fn, chat_ollama)) {
-    args <- c(args, list(model = "llama3.2"))
+  if (!"model" %in% names(args) & identical(chat_fn, chat_openai)) {
+    args <- c(args, list(model = "gpt-4o"))
   }
   
   # Define the type_array structure
@@ -82,11 +82,6 @@ ai_relevance.character <- function(.data, chat_fn, ..., topics, verbose = TRUE) 
     # Get the structured chat result
     chat_result <- chat$chat_structured(.data[i], type = type_array)
     
-    # Debugging: Print the structure of chat_result
-    if (verbose) {
-      cat("Debug: chat_result structure:\n")
-      print(chat_result)
-    }
     
     # Check if chat_result is a data frame with `name` and `score` columns
     if (is.data.frame(chat_result) && all(c("name", "score") %in% colnames(chat_result))) {
