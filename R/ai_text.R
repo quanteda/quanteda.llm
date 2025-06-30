@@ -4,31 +4,30 @@
 #' a docvar in a [quanteda::corpus], using a structured type_object() to define the expected
 #' response format. It supports few-shot learning examples for better performance.
 #' 
-#' @param .data A character vector of texts (with names!)
+#' @param .data A character vector of texts 
 #' @param chat_fn A function like `chat_openai()` from {ellmer}
-#' @param type_object A `type_object()` describing the expected structured output
+#' @param type_object A `type_object()` describing the expected structured output, see here for details:
+#' https://ellmer.tidyverse.org/articles/structured-data.html
 #' @param few_shot_examples Optional few-shot learning examples (data frame with `text`, `score`)
 #' @param verbose Logical; whether to print progress
 #' @param checkpoint_file A filename to save results after each call (enables resume), file is saved as RDS to working directory
 #' @param ... additional arguments passed to chat_fn
 #' @return character; the response from the LLM with a length equal to the
-#'   number of input documents, with the elements named with the input element
-#'   names; each element defined by the type_object is added as a character vector
+#'   number of input documents; each single element defined by `type_object()` is added as a character vector
 #'   
 #' @examples
 #' \dontrun{
 #' library(quanteda)
-#' # Example with few-shot learning
-#' few_shot_examples <- data.frame(
-#'  text = c("Document 1 text", "Document 2 text"),
-#'  score = c(5, 3)
-#'  )
-#' ai_text(data_corpus_inaugural[1:2], chat_fn = chat_openai,
-#' type_object = type_object(
-#' "Rate for tone", # this could be a much longer prompt 
-#' score = type_integer("From 1 to 5"),
-#' evidence = type_string("Justify score")
-#' ), few_shot_examples = few_shot_examples, checkpoint_file = "ai_text_results.RDS")
+#' library(quanteda.llm)
+#' #pak::pak("quanteda/quanteda.tidy")
+#' library(quanteda.tidy)
+#' corpus <- quanteda::data_corpus_inaugural %>%
+#'   mutate(llm_sum = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
+#'                              api_args = list(temperature = 0, seed = 42),
+#'                              type_object = type_object("Summary of the document",
+#'                              summary = type_string("Summarize the document in a few sentences."),
+#'                              checkpoint_file = "llm_sum.RDS")))
+#' }
 #' @export
 ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL, 
                     verbose = TRUE, checkpoint_file = "ai_text_results.RDS") {
@@ -97,17 +96,19 @@ ai_text_character <- function(.data, chat_fn, ..., type_object, few_shot_example
   for (doc_id in remaining_names) {
     i <- which(names(.data) == doc_id)
     
-    if (verbose) cat("... processing:", "[", i, "/", length(.data), "]", doc_id, "\n")
+    if (verbose) cat("... processing:", "[", i, "/", length(.data), "]")
     if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
     
     tryCatch({
       data <- chat$chat_structured(.data[i], type = type_object)
       flat <- unlist(data, recursive = TRUE, use.names = TRUE)
-      results[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
+      named_list <- setNames(as.list(flat), names(flat))
+      results[[doc_id]] <- as.data.frame(named_list, stringsAsFactors = FALSE)
       saveRDS(results, checkpoint_file)
     }, error = function(e) {
       warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
     })
+    
   }
   
   df_results <- dplyr::bind_rows(results, .id = "id")

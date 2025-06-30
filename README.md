@@ -28,45 +28,57 @@ obejcts and variables.
 
 The package includes the following functions:
 
-- `ai_summarize`: Summarizes documents in a corpus.
-- `ai_relevance`: Classifies documents in a corpus according to a set of
-  topics and assesses the relevance of each document to each topic.
-- `ai_score`: Scores documents in a corpus according to a defined scale.
-- `ai_validate`: Starts an interactive app to manually validate the
-  LLM-generated summaries, labels or scores.
-
-More to follow.
+- `ai_text()`:
+  - A generic function that can be used with any LLM supported by
+    `ellmer`.
+  - Generates structured responses such as summaries, relevance scores,
+    or classifications based on pre-defined instructions and scales for
+    texts in a `quanteda corpus`.
+  - Users can flexibly define prompts and structure of responses via
+    `type_object()` from the [`ellmer`
+    package](https://ellmer.tidyverse.org/articles/structured-data.html).
+  - Users can add a dataset with examples to improve LLM performance
+    (few-shot prompting)
+- `ai_validate()`:
+  - Starts an interactive app to manually validate the LLM-generated
+    outputs.
 
 # Supported LLMs
 
 The package supports all LLMs currently available with the `ellmer`
 package, including:
 
-- Anthropic’s Claude: `chat_claude`.
-- AWS Bedrock: `chat_bedrock`.
-- Azure OpenAI: `chat_azure`.
-- Databricks: `chat_databricks`.
-- DeepSeek: `chat_deepseek`.
-- GitHub model marketplace: `chat_github`.
-- Google Gemini: `chat_gemini`.
-- Groq: `chat_groq`.
-- Ollama: `chat_ollama`.
-- OpenAI: `chat_openai`.
-- OpenRouter: `chat_openrouter`.
-- perplexity.ai: `chat_perplexity`.
-- Snowflake Cortex: `chat_snowflake` and `chat_cortex_analyst`.
-- VLLM: `chat_vllm`.
+- Anthropic’s Claude: `chat_anthropic()`.
+- AWS Bedrock: `chat_aws_bedrock()`.
+- Azure OpenAI: `chat_azure_openai()`.
+- Cloudflare: `chat_cloudflare()`.
+- Databricks: `chat_databricks()`.
+- DeepSeek: `chat_deepseek()`.
+- GitHub model marketplace: `chat_github()`.
+- Google Gemini/Vertex AI: `chat_google_gemini()`,
+  `chat_google_vertex()`.
+- Groq: `chat_groq()`.
+- Hugging Face: `chat_huggingface()`.
+- Mistral: `chat_mistral()`.
+- Ollama: `chat_ollama()`.
+- OpenAI: `chat_openai()`.
+- OpenRouter: `chat_openrouter()`.
+- perplexity.ai: `chat_perplexity()`.
+- Snowflake Cortex: `chat_snowflake()` and `chat_cortex_analyst()`.
+- VLLM: `chat_vllm()`.
 
 For authentication and usage of each of these LLMs, please refer to the
 respective `ellmer` documentation
 [here](https://ellmer.tidyverse.org/reference/index.html). **For
-example,** to use the `chat_ollama` models, first download and install
+example,** to use the `chat_openai` models, you would need to sign up
+for an API key from
+[OpenAI](https://platform.openai.com/playground/prompts) which you can
+save in your `.Renviron` file as `OPENAI_API_KEY`. To use the
+`chat_ollama` models, first download and install
 [Ollama](https://ollama.com/). Then install some models either from the
-command line (e.g. with ollama pull llama3.1) or within R using the
+command line (e.g. with ollama pull llama3.1) or within R using the
 `rollama` package. The Ollama app must be running for the models to be
-used. To use the `chat_openai` models, you would need to sign up for an
-API key from OpenAI which you can save in your `.Renviron` file as
-`OPENAI_API_KEY`.
+used.
 
 ## Installation
 
@@ -80,7 +92,7 @@ pak::pak("quanteda/quanteda.llm")
 
 ## Examples
 
-### Using `ai_summarize`
+### Using `ai_text()` for summarization of documents
 
 ``` r
 library(quanteda)
@@ -88,69 +100,72 @@ library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_sum = ai_summarize(text, 
-  chat_fn = chat_openai, model = "gpt-4o"),
-  api_args = list(temperature = 0, seed = 42))
+  mutate(llm_sum = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
+                           api_args = list(temperature = 0, seed = 42),
+                           type_object = type_object("Summary of the document",
+                           summary = type_string("Summarize the document in a few sentences."),
+                           checkpoint_file = "llm_sum.RDS")))
 # llm_sum is created as a new docvar in the corpus
+# the checkpoint_file allow resuming the process in case of interruptions 
+# without re-generating all responses
 ```
 
-### Using `ai_relevance`
+### Using `ai_text()` for classifying documents as per relevance of topics
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
-topics = c("Politics", "Sports", "Technology", "Entertainment", "Business", "Other")
 corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_relevance <- ai_relevance(text, 
-  chat_fn = chat_openai, model = "gpt-4o", 
-  api_args = list(temperature = 0, seed = 42), topics = topics))
-# llm_relevance is created as a new docvar in the corpus
+  mutate(llm_relevance = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
+                                 api_args = list(temperature = 0, seed = 42),
+                                 type_object = type_array("Array of classification results. The scores should sum to 1.",
+                                 type_object(name = type_enum("The name of the topic", values = c("economy", "environment", "healthcare")),
+                                 score = type_number("The score for the topic, between 0 and 1, sum to 1 across all topics"))),
+                           checkpoint_file = "llm_relevance.RDS"))
+# llm_relevance.name and llm_relevance.score is created as a new docvar in the corpus
+# the checkpoint_file allow resuming the process in case of interruptions 
+# without re-generating all responses
 ```
 
-### Using `ai_score`
+### Using `ai_text()` for scoring documents on a scale
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
-scale = "Score the following document on a scale of how much it aligns
+corpus <- quanteda::data_corpus_inaugural %>%
+  mutate(llm_scale = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
+                                 api_args = list(temperature = 0, seed = 42),
+                                 type_object = type_object(
+         "Scoring of documents on a scale of 0 to 3",
+         score = type_integer("Score the following document on a scale of how much it aligns
          with the political left. The political left is defined as groups which 
          advocate for social equality, government intervention in the economy, 
          and progressive policies. Use the following metrics: 
          SCORING METRIC:
-         1 : extremely left
-         0 : not at all left"
-corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_openai, model = "gpt-4o", 
-  api_args = list(temperature = 0, seed = 42), scale = scale, evidence = TRUE))
-# llm_score is created as a new docvar in the corpus
-# evidence is created as a new docvar in the corpus with the LLM's reasoning
-# `few_shot_examples` can be used to provide a labelled dataset with examples of the scoring scale
+         3 : extremely left
+         2 : very left
+         1 : slightly left
+         0 : not at all left"),
+         evidence = type_string("Evidence supporting the score.")),
+                           checkpoint_file = "llm_scale.RDS"))
+# llm_scale.score and llm_scale.evidence is created as a new docvar in the corpus
+# the checkpoint_file allow resuming the process in case of interruptions 
+# without re-generating all responses
 ```
 
-### Using `ai_validate`
+### Using `ai_validate()` to manually check LLM-generated outputs
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
-scale = "Score the following document on a scale of how much it aligns
-         with the political left. The political left is defined as groups which 
-         advocate for social equality, government intervention in the economy, 
-         and progressive policies. Use the following metrics: 
-         SCORING METRIC:
-         1 : extremely left
-         0 : not at all left"
-corpus <- quanteda::data_corpus_inaugural %>%
-  quanteda.tidy::mutate(llm_score = ai_score(text, chat_fn = chat_openai, model = "gpt-4o", 
-  api_args = list(temperature = 0, seed = 42), scale = scale))
-# llm_score is created as a new docvar in the corpus
-# Start the interactive app to validate the LLM-generated scores
+# Start the interactive app to manually check the LLM-generated outputs
 corpus <- corpus %>%
-  quanteda.tidy::mutate(validated = ai_validate(text, llm_score))
+  quanteda.tidy::mutate(validated = ai_validate(text, llm_scale.score))
 # validated is created as a new docvar in the corpus with all non-validated scores set to NA
 ```

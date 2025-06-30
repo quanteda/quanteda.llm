@@ -15,13 +15,14 @@ ai_text(
 )
 }
 \arguments{
-\item{.data}{A character vector of texts (with names!)}
+\item{.data}{A character vector of texts}
 
 \item{chat_fn}{A function like `chat_openai()` from {ellmer}}
 
 \item{...}{additional arguments passed to chat_fn}
 
-\item{type_object}{A `type_object()` describing the expected structured output}
+\item{type_object}{A `type_object()` describing the expected structured output, see here for details:
+https://ellmer.tidyverse.org/articles/structured-data.html}
 
 \item{few_shot_examples}{Optional few-shot learning examples (data frame with `text`, `score`)}
 
@@ -31,11 +32,24 @@ ai_text(
 }
 \value{
 character; the response from the LLM with a length equal to the
-  number of input documents, with the elements named with the input element
-  names; each element defined by the type_object is added as a character vector
+  number of input documents; each single element defined by `type_object()` is added as a character vector
 }
 \description{
 This function applies ai-assisted analysis to each document in a character vector or
 a docvar in a [quanteda::corpus], using a structured type_object() to define the expected
 response format. It supports few-shot learning examples for better performance.
+}
+\examples{
+\dontrun{
+library(quanteda)
+library(quanteda.llm)
+#pak::pak("quanteda/quanteda.tidy")
+library(quanteda.tidy)
+corpus <- quanteda::data_corpus_inaugural \%>\%
+  mutate(llm_sum = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
+                             api_args = list(temperature = 0, seed = 42),
+                             type_object = type_object("Summary of the document",
+                             summary = type_string("Summarize the document in a few sentences."),
+                             checkpoint_file = "llm_sum.RDS")))
+}
 }
