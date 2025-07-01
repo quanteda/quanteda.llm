@@ -1,5 +1,6 @@
 ---
 output: github_document
+always_allow_html: true
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -92,52 +93,57 @@ used.
 
 ## Installation
 
-You can install the development version of quanteda.llm from
-[GitHub](https://github.com/) with:
+You can install the development version of **quanteda.llm** from
+<https://github.com/quanteda/quanteda.llm> with:
 
-``` r
+```{r, eval = FALSE}
 # install.packages("pak")
 pak::pak("quanteda/quanteda.llm")
+pak::pak("quanteda/quanteda.tidy")
+```
+
+```{r getting-started}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+
+data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
 ```
 
 ## Examples
 
 ### Using `ai_summary()` for summarization of documents
 
-``` r
-library(quanteda)
-library(quanteda.llm)
-#pak::pak("quanteda/quanteda.tidy")
-library(quanteda.tidy)
-corpus <- quanteda::data_corpus_inaugural %>%
+```{r ai_summary}
+# creates a new docvar "summary"
+data_corpus_inaugural <- data_corpus_inaugural %>%
   mutate(ai_summary(text, chat_fn = chat_openai, model = "gpt-4o",
-                           api_args = list(temperature = 0, seed = 42))
-# summary is created as a new docvar in the corpus
+                    api_args = list(temperature = 0, seed = 42)))
+
+library(kableExtra)
+cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
+      summary = data_corpus_inaugural$summary) %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(2)
 ```
 
-### Using `ai_salience()` for salience classification of topics
+### Using `ai_salience()` for salience rating of topics
 
-``` r
-library(quanteda)
-library(quanteda.llm)
-#pak::pak("quanteda/quanteda.tidy")
-library(quanteda.tidy)
-# Define the topics for salience classification
+```{r ai_salience}
+# define the topics for salience classification
 topics <- c("economy", "environment", "healthcare")
-corpus <- quanteda::data_corpus_inaugural %>%
+data_corpus_inaugural <- data_corpus_inaugural %>%
   mutate(ai_salience(text, topics, chat_fn = chat_openai, model = "gpt-4o",
-                                 api_args = list(temperature = 0, seed = 42))
+                     api_args = list(temperature = 0, seed = 42)))
+
 # topic and score are created as new docvars in the corpus
+glimpse(data_corpus_inaugural)
 ```
 
 ### Using `ai_score()` for scoring documents
 
-``` r
-library(quanteda)
-library(quanteda.llm)
-#pak::pak("quanteda/quanteda.tidy")
-library(quanteda.tidy)
-# Define the prompt for scoring documents
+```{r ai_score}
 prompt <- "Score the following document on a scale of how much it aligns
 with the political left. The political left is defined as groups which
 advocate for social equality, government intervention in the economy,
@@ -147,21 +153,23 @@ SCORING METRIC:
 2 : very left
 1 : slightly left
 0 : not at all left"
-corpus <- quanteda::data_corpus_inaugural %>%
+
+data_corpus_inaugural <- data_corpus_inaugural %>%
   mutate(ai_score(text, prompt, chat_fn = chat_openai, model = "gpt-4o",
-                                 api_args = list(temperature = 0, seed = 42))
+                  api_args = list(temperature = 0, seed = 42)))
+
 # score and evidence are created as new docvars in the corpus
+cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
+      select(docvars(data_corpus_inaugural), score, evidence)) %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(3) 
 ```
 
 ### Using `ai_validate()` to manually check LLM-generated outputs
 
-``` r
-library(quanteda)
-library(quanteda.llm)
-#pak::pak("quanteda/quanteda.tidy")
-library(quanteda.tidy)
-# Start the interactive app to manually check the LLM-generated outputs
-corpus <- corpus %>%
+```{r ai_validate, eval = FALSE}
+data_corpus_inaugural <- data_corpus_inaugural %>%
   mutate(ai_validate(text, score, evidence))
 # validated scores and comments as well as highlighted examples from texts are
 # created as new docvars in the corpus 
