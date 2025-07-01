@@ -23,7 +23,7 @@
 #' validate2 <- ai_validate(data_corpus_inaugural[1:2], llm_output = summ2, verbose = TRUE)
 #' }
 #' @export
-ai_validate <- function(text, llm_output, save_file = "validation_progress.rds", ..., verbose = TRUE) {
+ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.env(), ..., verbose = TRUE) {
   library(shiny)
   library(jsonlite)
   
@@ -32,28 +32,20 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
     stop("`text` must be a character vector.")
   }
   
-  # Convert `llm_output` to a character vector for display
-  llm_output <- as.character(llm_output)
-  
   # Function to wrap text to a fixed width
   wrap_text <- function(text, width = 80) {
     sapply(text, function(x) paste(strwrap(x, width = width), collapse = "\n"))
   }
   
-  # Wrap text and llm_output to a fixed width
+  # Wrap text to a fixed width
   text <- wrap_text(text, width = 80)
   
   # Initialize the validated results and manual extractions
-  if (file.exists(save_file)) {
-    # Load progress if the save file exists
-    progress <- readRDS(save_file)
-    validated_results <- progress$comments
-    examples <- progress$examples
-    if (verbose) message("Loaded progress from file.")
-  } else {
-    # Start fresh if no save file exists
-    validated_results <- rep("N/A", length(text))  # Start with "N/A"
-    examples <- rep("", length(text))              # Start with empty strings
+  if (!exists("comments", envir = result_env)) {
+    # Start fresh if no results exist in the environment
+    result_env$comments <- rep("N/A", length(text))  # Start with "N/A"
+    result_env$examples <- rep("", length(text))     # Start with empty strings
+    result_env$status <- rep("Unmarked", length(text))  # Start with "Unmarked"
   }
   
   if (verbose) {
@@ -67,33 +59,43 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
       tags$head(
         tags$style(HTML("
           body {
-            background-color: #ffccd5;
+            background-color: #95b8d1;
             color: #4d004d;
           }
           .title-panel {
-            background-color: #ff99aa;
+            background-color: #95b8d1;
             padding: 10px;
             border-radius: 5px;
             color: #4d004d;
             text-align: center;
           }
           .sidebar {
-            background-color: #ffb3c6;
+            background-color: #809bce;
             padding: 15px;
             border-radius: 5px;
           }
           .main-panel {
-            background-color: #ffe6eb;
+            background-color: #95b8d1;
             padding: 15px;
             border-radius: 5px;
           }
           .btn {
-            background-color: #ff6680;
-            color: white;
-            border: none;
+            background-color: #95b8d1;
           }
           .btn:hover {
-            background-color: #ff3366;
+            opacity: 0.9;
+          }
+          .btn-correct {
+            background-color: #d6eadf; 
+          }
+          .btn-correct:hover {
+            background-color: #218838; /* Darker green */
+          }
+          .btn-wrong {
+            background-color: #eac4d5; 
+          }
+          .btn-wrong:hover {
+            background-color: #c82333; /* Darker red */
           }
           textarea {
             background-color: #ffccd5;
@@ -118,7 +120,7 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
             color: #4d004d;
             padding: 10px;
             height: auto; /* Adjust height dynamically */
-            width: auto; /* Adjust height dynamically */
+            width: auto; /* Adjust width dynamically */
             white-space: pre-wrap; /* Preserve line breaks */
             word-wrap: break-word; /* Break long words */
             overflow-wrap: break-word; /* Ensure long words break */
@@ -126,19 +128,15 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
             line-height: 1; /* Single-spacing */
             border: none; /* No border or frame */
           }
-        ")),
-        # Add JavaScript to capture highlighted text only in the main text area
-        tags$script(HTML("
-          document.addEventListener('mouseup', function(event) {
-            var selectedText = '';
-            // Check if the selection is within the main text area
-            if (event.target.closest('.text-box')) {
-              selectedText = window.getSelection().toString();
-            }
-            if (selectedText.length > 0) {
-              Shiny.setInputValue('highlighted_text', selectedText, {priority: 'event'});
-            }
-          });
+          .evidence-text {
+            background-color: transparent; /* No background color */
+            color: #4d004d;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+          }
         "))
       ),
       div(class = "title-panel", h1("Manual Validation")),
@@ -146,9 +144,16 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
         sidebarPanel(
           div(class = "sidebar",
               h4("LLM Output:"),
-              textOutput("llm_output_sidebar"),  # Dynamically display the current LLM output
-              actionButton("prev_text", "Previous Text", class = "btn"),  # Button to move to the previous text
-              actionButton("next_text", "Next Text", class = "btn"),  # Button to move to the next text
+              verbatimTextOutput("llm_output_1"),  # Fixed ID for first component
+              conditionalPanel(
+                condition = "output.llm_evidence !== null",
+                div(class = "evidence-text", textOutput("llm_evidence"))  # Display evidence without a box
+              ),
+              actionButton("correct_btn", "Valid", class = "btn btn-correct"),  # Green button for correct
+              actionButton("wrong_btn", "Invalid", class = "btn btn-wrong"),        # Red button for wrong
+              textOutput("status_display"),                                      # Display the current status
+              actionButton("prev_text", "Previous Text", class = "btn"),         # Button to move to the previous text
+              actionButton("next_text", "Next Text", class = "btn"),             # Button to move to the next text
               textAreaInput("comments", "Comments:", "N/A", width = "100%", height = "100px"),  # Comments field starts with "N/A"
               textOutput("status"),
               h5("Highlighted examples:"),
@@ -178,40 +183,58 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
         text[current_index()]
       })
       
-      # Dynamically display the current LLM output in the sidebar
-      output$llm_output_sidebar <- renderText({
-        llm_output[current_index()]
+      observe({
+        llm_current <- llm_output[[current_index()]]
+        
+        output$llm_output_1 <- renderText({
+          if (length(llm_current) >= 1) llm_current[1] else "N/A"
+        })
+        
+      })
+      
+      # Render the evidence if `llm_evidence` is provided
+      if (!is.null(llm_evidence)) {
+        output$llm_evidence <- renderText({
+          llm_evidence[[current_index()]]
+        })
+      }
+      
+      # Display the current status
+      output$status_display <- renderText({
+        paste("Status:", result_env$status[current_index()])
+      })
+      
+      # Mark the current item as "Correct"
+      observeEvent(input$correct_btn, {
+        result_env$status[current_index()] <- "Valid"
+        output$status_display <- renderText({
+          paste("Status:", result_env$status[current_index()])
+        })
+      })
+      
+      # Mark the current item as "Wrong"
+      observeEvent(input$wrong_btn, {
+        result_env$status[current_index()] <- "Invalid"
+        output$status_display <- renderText({
+          paste("Status:", result_env$status[current_index()])
+        })
       })
       
       # Update the comments field and highlighted examples when navigating
       observe({
         # Update the comments field
-        updateTextAreaInput(session, "comments", value = validated_results[current_index()])
+        updateTextAreaInput(session, "comments", value = result_env$comments[current_index()])
         
         # Update the displayed highlighted examples
         output$highlighted_text_display <- renderText({
-          examples[current_index()]
-        })
-      })
-      
-      # Save highlighted text (append to existing highlights)
-      observeEvent(input$highlighted_text, {
-        # Append the new highlight to the existing highlights
-        examples[current_index()] <<- paste(
-          examples[current_index()],
-          input$highlighted_text,
-          sep = " | "
-        )
-        # Update the displayed highlighted text
-        output$highlighted_text_display <- renderText({
-          examples[current_index()]
+          result_env$examples[current_index()]
         })
       })
       
       # Save comments and move to the next text
       observeEvent(input$next_text, {
         # Save the current comments
-        validated_results[current_index()] <<- input$comments
+        result_env$comments[current_index()] <<- input$comments
         
         # Move to the next text
         if (current_index() < length(text)) {
@@ -225,7 +248,7 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
       # Save comments and move to the previous text
       observeEvent(input$prev_text, {
         # Save the current comments
-        validated_results[current_index()] <<- input$comments
+        result_env$comments[current_index()] <<- input$comments
         
         # Move to the previous text
         if (current_index() > 1) {
@@ -243,22 +266,20 @@ ai_validate <- function(text, llm_output, save_file = "validation_progress.rds",
   
   if (verbose) {
     # Calculate the summary
-    validated_count <- sum(validated_results != "N/A")
-    remaining_count <- sum(validated_results == "N/A")
+    validated_count <- sum(result_env$comments != "N/A")
+    remaining_count <- sum(result_env$comments == "N/A")
     
-    # Save progress to file
-    saveRDS(list(comments = validated_results, examples = examples), save_file)
     message(sprintf(
-      "Finished validation. %d texts validated, %d texts remaining. Progress saved to '%s'.",
+      "Finished validation. %d texts validated, %d texts remaining.",
       validated_count,
-      remaining_count,
-      save_file
+      remaining_count
     ))
   }
   
   # Return a data frame without the text column
   return(data.frame(
-    comments = validated_results,  # Single column for comments
-    examples = examples            # Single column for highlighted examples
+    comments = result_env$comments,  # Single column for comments
+    examples = result_env$examples, # Single column for highlighted examples
+    status = result_env$status      # Single column for status
   ))
 }

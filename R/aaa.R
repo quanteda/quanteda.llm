@@ -15,4 +15,4 @@ context_max <- list(
   "llama3.2" = 2048
 )
 
-global_system_prompt = "You are a political expert tasked with reading the supplied documents carefully and objectively."
+global_system_prompt = "You are an expert tasked with reading the supplied documents carefully and objectively."

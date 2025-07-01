@@ -30,16 +30,30 @@ The package includes the following functions:
 - `ai_text()`: 
   - A generic function that can be used with any LLM supported by
 `ellmer`.
-  - Generates structured responses such as summaries, relevance scores, 
-or classifications based on pre-defined instructions and scales 
+  - Generates structured responses or classifications based on pre-defined instructions
 for texts in a `quanteda corpus`. 
   - Users can flexibly define prompts and structure of responses via 
   `type_object()` from the [`ellmer` package](https://ellmer.tidyverse.org/articles/structured-data.html).
   - Users can add a dataset with examples to improve LLM performance (few-shot prompting)
+  - Supports resuming interrupted processes in a `result_env` environment.
   
 - `ai_validate()`: 
   - Starts an interactive app to manually validate the
   LLM-generated outputs.
+  - Allows users to review and validate the LLM-generated outputs and justifications, marking them as valid or invalid.
+  - Supports resuming the validation process in case of interruptions in a `result_env` environment.
+  
+- `ai_summary()`:
+  - A wrapper around `ai_text()` for summarizing documents in a corpus.
+  - Uses a pre-defined `type_object()` to structure the summary output.
+  
+- `ai_salience()`:
+  - A wrapper around `ai_text()` for computing salience scores for topics in a corpus.
+  - Uses a pre-defined `type_object()` to structure the salience classification output.
+  
+- `ai_score()`:
+  - A wrapper around `ai_text()` for scoring documents based on a scale defined by a prompt.
+  - Uses a pre-defined `type_object()` to structure the scoring output.
 
 # Supported LLMs
 
@@ -88,7 +102,7 @@ pak::pak("quanteda/quanteda.llm")
 
 ## Examples
 
-### Using `ai_text()` for summarization of documents
+### Using `ai_summary()` for summarization of documents
 
 ``` r
 library(quanteda)
@@ -96,61 +110,47 @@ library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
 corpus <- quanteda::data_corpus_inaugural %>%
-  mutate(llm_sum = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
-                           api_args = list(temperature = 0, seed = 42),
-                           type_object = type_object("Summary of the document",
-                           summary = type_string("Summarize the document in a few sentences.")),
-                           checkpoint_file = "llm_sum.RDS"))
-# llm_sum is created as a new docvar in the corpus
-# the checkpoint_file allow resuming the process in case of interruptions 
-# without re-generating all responses
+  mutate(ai_summary(text, chat_fn = chat_openai, model = "gpt-4o",
+                           api_args = list(temperature = 0, seed = 42))
+# summary is created as a new docvar in the corpus
 ```
 
-### Using `ai_text()` for classifying documents as per relevance of topics
+### Using `ai_salience()` for salience classification of topics
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
+# Define the topics for salience classification
+topics <- c("economy", "environment", "healthcare")
 corpus <- quanteda::data_corpus_inaugural %>%
-  mutate(llm_relevance = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
-                                 api_args = list(temperature = 0, seed = 42),
-                                 type_object = type_array("Array of classification results. The scores should sum to 1.",
-                                 type_object(name = type_enum("The name of the topic", values = c("economy", "environment", "healthcare")),
-                                 score = type_number("The score for the topic, between 0 and 1, sum to 1 across all topics"))),
-                           checkpoint_file = "llm_relevance.RDS"))
-# llm_relevance_name and llm_relevance_score is created as a new docvar in the corpus
-# the checkpoint_file allow resuming the process in case of interruptions 
-# without re-generating all responses
+  mutate(ai_salience(text, topics, chat_fn = chat_openai, model = "gpt-4o",
+                                 api_args = list(temperature = 0, seed = 42))
+# topic and score are created as new docvars in the corpus
 ```
 
-### Using `ai_text()` for scoring documents on a scale
+### Using `ai_score()` for scoring documents
 
 ``` r
 library(quanteda)
 library(quanteda.llm)
 #pak::pak("quanteda/quanteda.tidy")
 library(quanteda.tidy)
+# Define the prompt for scoring documents
+prompt <- "Score the following document on a scale of how much it aligns
+with the political left. The political left is defined as groups which
+advocate for social equality, government intervention in the economy,
+and progressive policies. Use the following metrics:
+SCORING METRIC:
+3 : extremely left
+2 : very left
+1 : slightly left
+0 : not at all left"
 corpus <- quanteda::data_corpus_inaugural %>%
-  mutate(llm_scale = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
-                                 api_args = list(temperature = 0, seed = 42),
-                                 type_object = type_object(
-         "Scoring of documents on a scale of 0 to 3",
-         score = type_integer("Score the following document on a scale of how much it aligns
-         with the political left. The political left is defined as groups which 
-         advocate for social equality, government intervention in the economy, 
-         and progressive policies. Use the following metrics: 
-         SCORING METRIC:
-         3 : extremely left
-         2 : very left
-         1 : slightly left
-         0 : not at all left"),
-         evidence = type_string("Evidence supporting the score.")),
-                           checkpoint_file = "llm_scale.RDS"))
-# llm_scale_score and llm_scale_evidence is created as a new docvar in the corpus
-# the checkpoint_file allow resuming the process in case of interruptions 
-# without re-generating all responses
+  mutate(ai_score(text, prompt, chat_fn = chat_openai, model = "gpt-4o",
+                                 api_args = list(temperature = 0, seed = 42))
+# score and evidence are created as new docvars in the corpus
 ```
 
 ### Using `ai_validate()` to manually check LLM-generated outputs
@@ -162,6 +162,7 @@ library(quanteda.llm)
 library(quanteda.tidy)
 # Start the interactive app to manually check the LLM-generated outputs
 corpus <- corpus %>%
-  quanteda.tidy::mutate(validated = ai_validate(text, llm_scale_score))
-# validated is created as a new docvar in the corpus with all non-validated scores set to NA
+  mutate(ai_validate(text, score, evidence))
+# validated scores and comments as well as highlighted examples from texts are
+# created as new docvars in the corpus 
 ```

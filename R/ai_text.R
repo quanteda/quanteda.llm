@@ -10,7 +10,7 @@
 #' https://ellmer.tidyverse.org/articles/structured-data.html
 #' @param few_shot_examples Optional few-shot learning examples (data frame with `text`, `score`)
 #' @param verbose Logical; whether to print progress
-#' @param checkpoint_file A filename to save results after each call (enables resume), file is saved as RDS to working directory
+#' @param result_env An environment to store results and allow resuming
 #' @param ... additional arguments passed to chat_fn
 #' @return character; the response from the LLM with a length equal to the
 #'   number of input documents; each single element defined by `type_object()` is added as a character vector
@@ -30,26 +30,25 @@
 #' }
 #' @export
 ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL, 
-                    verbose = TRUE, checkpoint_file = "ai_text_results.RDS") {
+                    verbose = TRUE, result_env = new.env()) {
   if (is.character(.data)) {
     return(ai_text_character(.data, chat_fn, ..., type_object = type_object, 
                              few_shot_examples = few_shot_examples, 
                              verbose = verbose, 
-                             checkpoint_file = checkpoint_file))
+                             result_env = result_env))
   } else {
     stop("Unsupported data type for ai_text")
   }
 }
-
 #' @export
 #' @importFrom glue glue
 ai_text_character <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL, 
-                              verbose = TRUE, checkpoint_file = "ai_text_results.RDS") {
+                              verbose = TRUE, result_env = new.env()) {
   args <- list(...)
   
   if (is.null(names(.data))) names(.data) <- as.character(seq_along(.data))
   
-  # Construct system prompt
+  # Set up system prompt
   if (!"system_prompt" %in% names(args)) {
     if (!is.null(few_shot_examples)) {
       if (!is.data.frame(few_shot_examples) || !all(c("text", "score") %in% colnames(few_shot_examples))) {
@@ -73,47 +72,35 @@ ai_text_character <- function(.data, chat_fn, ..., type_object, few_shot_example
     }
   }
   
-  # Add model default if needed
   if (!"model" %in% names(args) && identical(chat_fn, chat_openai)) {
     args <- c(args, list(model = "gpt-4o"))
   }
-  
-  # Resume logic
-  if (file.exists(checkpoint_file)) {
-    if (verbose) message("Loading existing results from checkpoint file: ", checkpoint_file)
-    results <- readRDS(checkpoint_file)
-  } else {
-    results <- list()
-  }
-  
-  remaining_names <- setdiff(names(.data), names(results))
   
   chat <- suppressMessages(do.call(chat_fn, args))
   model <- chat$get_model()
   
   if (verbose) cat("Calling", deparse(substitute(chat_fn)), "(", model, "):\n")
   
-  for (doc_id in remaining_names) {
-    i <- which(names(.data) == doc_id)
+  for (doc_id in names(.data)) {
+    if (exists(doc_id, envir = result_env)) next  # skip if already processed
     
+    i <- which(names(.data) == doc_id)
     if (verbose) cat("... processing:", "[", i, "/", length(.data), "]")
+    
     if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
     
     tryCatch({
       data <- chat$chat_structured(.data[i], type = type_object)
       flat <- unlist(data, recursive = TRUE, use.names = TRUE)
-      named_list <- setNames(as.list(flat), names(flat))
-      results[[doc_id]] <- as.data.frame(named_list, stringsAsFactors = FALSE)
-      saveRDS(results, checkpoint_file)
+      result_env[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
     }, error = function(e) {
       warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
     })
-    
   }
   
-  df_results <- dplyr::bind_rows(results, .id = "id")
+  df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
   rownames(df_results) <- NULL
-  
   if (verbose) message("Finished.")
+  
   return(df_results)
 }

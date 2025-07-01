@@ -11,7 +11,7 @@ ai_text(
   type_object,
   few_shot_examples = NULL,
   verbose = TRUE,
-  checkpoint_file = "ai_text_results.RDS"
+  result_env = new.env()
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ https://ellmer.tidyverse.org/articles/structured-data.html}
 
 \item{verbose}{Logical; whether to print progress}
 
-\item{checkpoint_file}{A filename to save results after each call (enables resume), file is saved as RDS to working directory}
+\item{result_env}{An environment to store results and allow resuming}
 }
 \value{
 character; the response from the LLM with a length equal to the

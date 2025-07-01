@@ -8,7 +8,8 @@ documents in a corpus which were summarized, labelled, or scored by an LLM.}
 ai_validate(
   text,
   llm_output,
-  save_file = "validation_progress.rds",
+  llm_evidence = NULL,
+  result_env = new.env(),
   ...,
   verbose = TRUE
 )
