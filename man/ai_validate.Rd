@@ -2,8 +2,8 @@
 % Please edit documentation in R/ai_validate.R
 \name{ai_validate}
 \alias{ai_validate}
-\title{Starts an interactive app to manually validate the
-documents in a corpus which were summarized, labelled, or scored by an LLM.}
+\title{Starts an interactive app to manually validate the documents in a corpus
+which were summarized, labelled, or scored by an LLM.}
 \usage{
 ai_validate(
   text,
@@ -15,22 +15,28 @@ ai_validate(
 )
 }
 \arguments{
-\item{llm_output}{a character string; the name of the LLM output column which contains
-the summaries, labels, or scores to be validated}
-
-\item{verbose}{logical; output a progress indicator if `TRUE`}
-
-\item{.data}{a character or [quanteda::corpus] object containing the
+\item{text}{a character or \link[quanteda:corpus]{quanteda::corpus} object containing the
 documents to be manually validated}
+
+\item{llm_output}{a character string; the name of the LLM output column which
+contains the summaries, labels, or scores to be validated}
+
+\item{llm_evidence}{\strong{to be documented}}
+
+\item{result_env}{An environment to store results and allow resuming}
+
+\item{...}{additional arguments passed to \code{chat_fn}}
+
+\item{verbose}{logical; output a progress indicator if \code{TRUE}}
 }
 \value{
-character; the response from the manual validation with a length equal to the
-  number of input documents, with the elements named with the input element
-  names
+character; the response from the manual validation with a length
+equal to the number of input documents, with the elements named with the
+input element names
 }
 \description{
-The comments from manual validation for each text are added as an additional docvar to the input data
-with all texts not yet validated as "N/A".
+The comments from manual validation for each text are added as an additional
+docvar to the input data with all texts not yet validated as \code{NA}.
 }
 \examples{
 \dontrun{

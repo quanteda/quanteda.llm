@@ -2,12 +2,12 @@
 % Please edit documentation in R/ai_salience.R
 \name{ai_salience}
 \alias{ai_salience}
-\title{Compute salience scores for topics in a corpus or character vector}
+\title{Compute salience scores for topics}
 \usage{
 ai_salience(.data, topics, chat_fn, ..., verbose = TRUE)
 }
 \arguments{
-\item{.data}{a character or [quanteda::corpus] object containing the
+\item{.data}{a character or \link[quanteda:corpus]{quanteda::corpus} object containing the
 documents to be summarized}
 
 \item{topics}{character; a vector of topic names for which salience scores
@@ -15,28 +15,25 @@ will be computed; the scores sum to 1 across all topics}
 
 \item{chat_fn}{function; a chat function from \pkg{ellmer}}
 
-\item{...}{additional arguments passed to `chat_fn`}
+\item{...}{additional arguments passed to \code{chat_fn}}
 
-\item{verbose}{logical; output a progress indicator if `TRUE`}
-
-\item{model}{a llm model object}
-
-\item{result_env}{An environment to store results and allow resuming}
+\item{verbose}{logical; output a progress indicator if \code{TRUE}}
 }
 \value{
 character; the response from the LLM with a length equal to the
-  number of input documents, with the elements named with the input element
-  names
+number of input documents, with the elements named with the input element
+names
 }
 \description{
-This function is a wrapper around `ai_text` to compute salience scores for
+This function is a wrapper around \code{\link[=ai_text]{ai_text()}} to compute salience scores for
 topics in a corpus using a chat function.
 }
 \examples{
 \dontrun{
 library(quanteda)
-salience <- ai_salience(data_corpus_inaugural, chat_fn = chat_openai, model = "gpt-4o",
-                api_args = list(temperature = 0, seed = 42),
-                topics = c("economy", "environment", "healthcare"))
+salience <- ai_salience(data_corpus_inaugural[1:3],
+                        chat_fn = chat_openai, model = "gpt-4o",
+                        api_args = list(temperature = 0, seed = 42),
+                        topics = c("economy", "environment", "healthcare"))
 }
 }

@@ -1,16 +1,18 @@
-#' Starts an interactive app to manually validate the
-#' documents in a corpus which were summarized, labelled, or scored by an LLM.
-#' 
-#' The comments from manual validation for each text are added as an additional docvar to the input data
-#' with all texts not yet validated as "N/A".
-#' @param .data a character or [quanteda::corpus] object containing the
+#' Starts an interactive app to manually validate the documents in a corpus
+#' which were summarized, labelled, or scored by an LLM.
+#'
+#' The comments from manual validation for each text are added as an additional
+#' docvar to the input data with all texts not yet validated as `NA`.
+#' @param text a character or [quanteda::corpus] object containing the
 #'   documents to be manually validated
-#' @param llm_output a character string; the name of the LLM output column which contains
-#' the summaries, labels, or scores to be validated
+#' @param llm_output a character string; the name of the LLM output column which
+#'   contains the summaries, labels, or scores to be validated
+#' @param llm_evidence **to be documented**
 #' @param verbose logical; output a progress indicator if `TRUE`
-#' @return character; the response from the manual validation with a length equal to the
-#'   number of input documents, with the elements named with the input element
-#'   names
+#' @inheritParams ai_text
+#' @return character; the response from the manual validation with a length
+#'   equal to the number of input documents, with the elements named with the
+#'   input element names
 #' @name ai_validate
 #' @import shiny
 #' @examples
@@ -22,24 +24,23 @@
 #' validate1 <- ai_validate(data_char_ukimmig2010, llm_output = summ1, verbose = TRUE)
 #' validate2 <- ai_validate(data_corpus_inaugural[1:2], llm_output = summ2, verbose = TRUE)
 #' }
+#' @import shiny
 #' @export
 ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.env(), ..., verbose = TRUE) {
-  library(shiny)
-  library(jsonlite)
-  
+
   # Ensure inputs are character vectors
   if (!is.character(text)) {
     stop("`text` must be a character vector.")
   }
-  
+
   # Function to wrap text to a fixed width
   wrap_text <- function(text, width = 80) {
     sapply(text, function(x) paste(strwrap(x, width = width), collapse = "\n"))
   }
-  
+
   # Wrap text to a fixed width
   text <- wrap_text(text, width = 80)
-  
+
   # Initialize the validated results and manual extractions
   if (!exists("comments", envir = result_env)) {
     # Start fresh if no results exist in the environment
@@ -47,11 +48,11 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
     result_env$examples <- rep("", length(text))     # Start with empty strings
     result_env$status <- rep("Unmarked", length(text))  # Start with "Unmarked"
   }
-  
+
   if (verbose) {
     message("Launching Shiny app for manual validation...")
   }
-  
+
   # Define the Shiny app
   app <- shinyApp(
     ui = fluidPage(
@@ -86,13 +87,13 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
             opacity: 0.9;
           }
           .btn-correct {
-            background-color: #d6eadf; 
+            background-color: #d6eadf;
           }
           .btn-correct:hover {
             background-color: #218838; /* Darker green */
           }
           .btn-wrong {
-            background-color: #eac4d5; 
+            background-color: #eac4d5;
           }
           .btn-wrong:hover {
             background-color: #c82333; /* Darker red */
@@ -169,41 +170,41 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
         )
       ),
       div(class = "footer",
-          HTML("AI Validator made with ♥, 
-               <a href='https://shiny.posit.co/' target='_blank'>Shiny</a>, 
-               and <a href='https://github.com/features/copilot' target='_blank'>quanteda.llm</a> - 
+          HTML("AI Validator made with \u2665,
+               <a href='https://shiny.posit.co/' target='_blank'>Shiny</a>,
+               and <a href='https://github.com/features/copilot' target='_blank'>quanteda.llm</a> -
                remember, it is important to carefully check the output of LLMs.")
       )
     ),
     server = function(input, output, session) {
       current_index <- reactiveVal(1)
-      
+
       # Display the current text
       output$text_display <- renderText({
         text[current_index()]
       })
-      
+
       observe({
         llm_current <- llm_output[[current_index()]]
-        
+
         output$llm_output_1 <- renderText({
           if (length(llm_current) >= 1) llm_current[1] else "N/A"
         })
-        
+
       })
-      
+
       # Render the evidence if `llm_evidence` is provided
       if (!is.null(llm_evidence)) {
         output$llm_evidence <- renderText({
           llm_evidence[[current_index()]]
         })
       }
-      
+
       # Display the current status
       output$status_display <- renderText({
         paste("Status:", result_env$status[current_index()])
       })
-      
+
       # Mark the current item as "Correct"
       observeEvent(input$correct_btn, {
         result_env$status[current_index()] <- "Valid"
@@ -211,7 +212,7 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
           paste("Status:", result_env$status[current_index()])
         })
       })
-      
+
       # Mark the current item as "Wrong"
       observeEvent(input$wrong_btn, {
         result_env$status[current_index()] <- "Invalid"
@@ -219,23 +220,23 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
           paste("Status:", result_env$status[current_index()])
         })
       })
-      
+
       # Update the comments field and highlighted examples when navigating
       observe({
         # Update the comments field
         updateTextAreaInput(session, "comments", value = result_env$comments[current_index()])
-        
+
         # Update the displayed highlighted examples
         output$highlighted_text_display <- renderText({
           result_env$examples[current_index()]
         })
       })
-      
+
       # Save comments and move to the next text
       observeEvent(input$next_text, {
         # Save the current comments
         result_env$comments[current_index()] <<- input$comments
-        
+
         # Move to the next text
         if (current_index() < length(text)) {
           current_index(current_index() + 1)
@@ -244,12 +245,12 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
           output$status <- renderText("You are at the last text.")
         }
       })
-      
+
       # Save comments and move to the previous text
       observeEvent(input$prev_text, {
         # Save the current comments
         result_env$comments[current_index()] <<- input$comments
-        
+
         # Move to the previous text
         if (current_index() > 1) {
           current_index(current_index() - 1)
@@ -260,22 +261,22 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL, result_env = new.
       })
     }
   )
-  
+
   # Run the Shiny app
   runApp(app)
-  
+
   if (verbose) {
     # Calculate the summary
     validated_count <- sum(result_env$comments != "N/A")
     remaining_count <- sum(result_env$comments == "N/A")
-    
+
     message(sprintf(
       "Finished validation. %d texts validated, %d texts remaining.",
       validated_count,
       remaining_count
     ))
   }
-  
+
   # Return a data frame without the text column
   return(data.frame(
     comments = result_env$comments,  # Single column for comments

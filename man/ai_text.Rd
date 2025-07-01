@@ -2,7 +2,7 @@
 % Please edit documentation in R/ai_text.R
 \name{ai_text}
 \alias{ai_text}
-\title{Structured AI analysis of a character vector / docvar in a [quanteda::corpus]}
+\title{Structured AI analysis texts}
 \usage{
 ai_text(
   .data,
@@ -17,39 +17,40 @@ ai_text(
 \arguments{
 \item{.data}{A character vector of texts}
 
-\item{chat_fn}{A function like `chat_openai()` from {ellmer}}
+\item{chat_fn}{A function like \link[ellmer:chat_openai]{chat_openai()}. See
+\url{https://ellmer.tidyverse.org/articles/structured-data.html} for details.}
 
-\item{...}{additional arguments passed to chat_fn}
+\item{...}{additional arguments passed to \code{chat_fn}}
 
-\item{type_object}{A `type_object()` describing the expected structured output, see here for details:
-https://ellmer.tidyverse.org/articles/structured-data.html}
+\item{type_object}{an \pkg{ellmer} \link[ellmer:type_boolean]{type_object()}}
 
-\item{few_shot_examples}{Optional few-shot learning examples (data frame with `text`, `score`)}
+\item{few_shot_examples}{Optional few-shot learning examples (data frame with
+\code{text}, \code{score})}
 
-\item{verbose}{Logical; whether to print progress}
+\item{verbose}{logical; whether to print progress}
 
 \item{result_env}{An environment to store results and allow resuming}
 }
 \value{
 character; the response from the LLM with a length equal to the
-  number of input documents; each single element defined by `type_object()` is added as a character vector
+number of input documents; each single element defined by
+\link[ellmer:type_boolean]{type_object()} is added as a character vector
 }
 \description{
-This function applies ai-assisted analysis to each document in a character vector or
-a docvar in a [quanteda::corpus], using a structured type_object() to define the expected
-response format. It supports few-shot learning examples for better performance.
+This function applies AI-assisted analysis to each document in a character
+vector or a docvar in a \link[quanteda:corpus]{corpus}, using a structured
+\link[ellmer:type_boolean]{type_object()} to define the expected response format. It supports
+few-shot learning examples for better performance.
 }
 \examples{
 \dontrun{
-library(quanteda)
-library(quanteda.llm)
-#pak::pak("quanteda/quanteda.tidy")
-library(quanteda.tidy)
-corpus <- quanteda::data_corpus_inaugural \%>\%
-  mutate(llm_sum = ai_text(text, chat_fn = chat_openai, model = "gpt-4o",
-                             api_args = list(temperature = 0, seed = 42),
-                             type_object = type_object("Summary of the document",
-                             summary = type_string("Summarize the document in a few sentences."),
-                             checkpoint_file = "llm_sum.RDS")))
+library(ellmer)
+results <- quanteda::data_corpus_inaugural[1:3] \%>\%
+  ai_text(chat_fn = chat_openai, model = "gpt-4o",
+          api_args = list(temperature = 0, seed = 42),
+          type_object =
+            type_object("Summary of the document",
+                        summary = type_string("Summarize the document in a few sentences.")),
+  )
 }
 }

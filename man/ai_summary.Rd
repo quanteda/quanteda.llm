@@ -2,36 +2,35 @@
 % Please edit documentation in R/ai_summary.R
 \name{ai_summary}
 \alias{ai_summary}
-\title{Summarize documents in a corpus or character vector}
+\title{Summarize documents}
 \usage{
 ai_summary(.data, chat_fn, ..., verbose = TRUE)
 }
 \arguments{
-\item{.data}{a character or [quanteda::corpus] object containing the
+\item{.data}{a character or \link[quanteda:corpus]{quanteda::corpus} object containing the
 documents to be summarized}
 
 \item{chat_fn}{function; a chat function from \pkg{ellmer}}
 
-\item{...}{additional arguments passed to `chat_fn`}
+\item{...}{additional arguments passed to \code{chat_fn}}
 
-\item{verbose}{logical; output a progress indicator if `TRUE`}
-
-\item{model}{a llm model object}
-
-\item{topics}{character; a vector of topic names for which salience scores}
+\item{verbose}{logical; output a progress indicator if \code{TRUE}}
 }
 \value{
 character; the response from the LLM with a length equal to the
-  number of input documents, with the elements named with the input element
-  names
+number of input documents, with the elements named with the input element
+names
 }
 \description{
-This function is a wrapper around `ai_text` to summarize documents using a chat function.
+A convenience wrapper around \code{\link[=ai_text]{ai_text()}} to summarize documents using a
+chat function.
 }
 \examples{
 \dontrun{
 library(quanteda)
-summaries <- ai_summary(data_corpus_inaugural, chat_fn = chat_openai, model = "gpt-4o",
-                api_args = list(temperature = 0, seed = 42))
+library(ellmer)
+summaries <- ai_summary(data_corpus_inaugural[1:3],
+                        chat_fn = chat_openai, model = "gpt-4o",
+                        api_args = list(temperature = 0, seed = 42))
 }
 }
