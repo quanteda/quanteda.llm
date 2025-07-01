@@ -10,6 +10,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 [![CRAN
 status](https://www.r-pkg.org/badges/version/quanteda.llm)](https://CRAN.R-project.org/package=quanteda.llm)
 [![R-CMD-check](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/quanteda/quanteda.llm/graph/badge.svg)](https://app.codecov.io/gh/quanteda/quanteda.llm)
 <!-- badges: end -->
 
 The **quanteda.llm** package makes it easy to use LLMs with
@@ -182,17 +184,15 @@ summary
 
 <td style="text-align:left;">
 
-This document is a speech that emphasizes the transition of power in the
-United States, with a focus on returning control from Washington, D.C.
-to the people. The speaker criticizes the political establishment for
-prospering while American citizens have faced economic hardships. The
-speech outlines a vision for revitalizing the nation by prioritizing
-American interests, enhancing job opportunities, and rebuilding
-infrastructure. Key themes include unity, patriotism, American
-exceptionalism, and a focus on domestic challenges such as poverty,
-crime, and unemployment. The speech also stresses rebuilding
-international relationships based on mutual respect and prioritizing
-America’s protection and prosperity.
+The document is a speech delivered by a political leader during an
+inauguration ceremony. The speech emphasizes a commitment to
+transferring power from Washington D.C. back to the people, highlighting
+a desire to rebuild the nation by prioritizing American interests. The
+speaker calls for economic revitalization, increased national strength,
+and unity among citizens. Key themes include patriotism, reducing
+foreign influence, improving infrastructure, and ensuring safety. The
+speech concludes with a pledge to make America strong, wealthy, proud,
+and safe again.
 </td>
 
 </tr>
@@ -206,15 +206,16 @@ America’s protection and prosperity.
 
 <td style="text-align:left;">
 
-This speech, delivered at an inauguration, emphasizes the themes of
-unity, resilience, and the importance of democracy. The speaker
-acknowledges the challenges the country faces, including a pandemic,
-racial injustice, and political divisions, but stresses the need for
-unity and collaboration to overcome these obstacles. He calls for an end
-to division and an embrace of common goals such as dignity, respect, and
-truth. The speech includes a dedication to serve all citizens and a
-commitment to uphold democratic principles, urging Americans to work
-together to heal and advance the nation.
+This speech celebrates the inauguration of a new president, emphasizing
+the core theme of “unity” and the resilience of American democracy. The
+president reflects on recent challenges, including a global pandemic,
+economic struggles, and political unrest, and calls for healing and
+cooperation across political divides. By invoking historical parallels
+and previous leaders, the speech underscores the importance of coming
+together to address social justice, climate change, and global
+re-engagement. The president pledges to serve all citizens equally,
+honor democratic principles, and propose a future defined by collective
+effort and shared values.
 </td>
 
 </tr>
@@ -228,17 +229,15 @@ together to heal and advance the nation.
 
 <td style="text-align:left;">
 
-This document is a speech on the theme of democracy and unity in
-America, likely delivered during a significant political occasion like
-an inauguration. The speaker praises the resilience of American
-democracy, highlighting recent challenges such as political extremism, a
-pandemic, and social injustices while emphasizing the importance of
-unity to overcome these difficulties. The speaker calls for Americans to
-come together beyond political divides and address issues like racial
-justice, climate change, and economic recovery. It’s a hopeful message
-with references to historical precedents of unity and progress in
-America, invoking a sense of duty and collective responsibility to
-preserve and advance democracy.
+The document is a speech reaffirming the values and resilience of
+American democracy, delivered during a historic moment of transition in
+leadership. It emphasizes the importance of unity, healing, and
+confronting the current challenges facing the nation, including
+political extremism, racism, and the COVID-19 pandemic. The speech calls
+for a collective effort to rebuild and strengthen the nation, while
+honoring past sacrifices and promoting truth and justice. It concludes
+with a commitment to serving all Americans and a vision for a hopeful
+and united future.
 </td>
 
 </tr>
@@ -273,13 +272,13 @@ glimpse(data_corpus_inaugural)
 #> $ FirstName <chr> "Donald J.", "Joseph R.", "Donald J."
 #> $ Party     <fct> Republican, Democratic, Republican
 #> $ id        <chr> "1", "2", "3"
-#> $ summary   <chr> "This document is a speech that emphasizes the transition of…
-#> $ topic1    <dbl> 1, 3, 1
+#> $ summary   <chr> "The document is a speech delivered by a political leader du…
+#> $ topic1    <dbl> 1, 1, 1
 #> $ topic2    <dbl> 2, 2, 2
-#> $ topic3    <dbl> 3, 1, 3
-#> $ score1    <dbl> 0.65, 0.15, 0.05
-#> $ score2    <dbl> 0.10, 0.15, 0.15
-#> $ score3    <dbl> 0.25, 0.70, 0.80
+#> $ topic3    <dbl> 3, 3, 3
+#> $ score1    <dbl> 0.70, 0.10, 0.15
+#> $ score2    <dbl> 0.1, 0.1, 0.1
+#> $ score3    <dbl> 0.20, 0.80, 0.75
 ```
 
 ### Using `ai_score()` for scoring documents
@@ -354,14 +353,14 @@ evidence
 
 <td style="text-align:left;">
 
-The document emphasizes themes such as nationalism, patriotism, and
-‘America First,’ highlighting a departure from government intervention
-in global affairs that prioritize American interests and protectionism.
-The language used suggests disenchantment with the establishment and a
-focus on returning power to the populace in rhetoric rather than
-advocating for progressive policies or social equality. The stress on
-self-reliance, protectionism in trade, and criticism of the political
-establishment aligns more with conservative rather than leftist views.
+The document primarily emphasizes a populist approach with a strong
+focus on nationalism and the transfer of power “back to the people”. It
+criticizes the political elite and international engagement, advocating
+for “America first” policies and economic nationalism such as protecting
+American industries and prioritizing American workers. These themes
+align more with right-leaning political ideologies focused on
+sovereignty, economic protectionism, and nationalism. Therefore, it does
+not align with the political left.
 </td>
 
 </tr>
@@ -380,14 +379,12 @@ establishment aligns more with conservative rather than leftist views.
 
 <td style="text-align:left;">
 
-The document emphasizes themes of unity, democracy, and addressing
-systemic issues like racial justice and the climate crisis. These are
-values generally associated with the political left. The speech also
-mentions the need for government action to rebuild the middle class and
-secure healthcare for all, aligning with progressive economic policies.
-However, the overall message is one of unity and seeking common ground,
-not exclusively leftist personal or economic policies, resulting in a
-score of ‘slightly left.’
+The document emphasizes themes commonly associated with the political
+left, such as addressing racial justice, confronting political
+extremism, and recognizing systemic racism. It also mentions addressing
+climate change, promoting unity, and ensuring health care for all. While
+these align with progressive values, the focus is largely on unity and
+bipartisanship, which moderates the overall leftist alignment.
 </td>
 
 </tr>
@@ -406,15 +403,13 @@ score of ‘slightly left.’
 
 <td style="text-align:left;">
 
-The document emphasizes themes typically associated with the political
-left, such as unity, racial justice, and combating political extremism,
-white supremacy, and domestic terrorism. It endorses progressive ideals
-like rebuilding the middle class, making healthcare secure for all, and
-delivering racial justice, all of which align with left-leaning
-priorities. The focus on climate crisis and systemic racism are also
-indicative of left-wing concerns. However, the speech also calls for
-unity and bipartisan cooperation, which moderates the left alignment
-slightly, but it strongly emphasizes traditionally progressive policies.
+The document advocates for social equality, evident in its emphasis on
+racial justice, combating white supremacy, and efforts to unite a
+divided nation. It also supports progressive policies like economic
+rebuilding, creating jobs, and addressing climate change. These thematic
+elements align it more with the political left. However, it also
+stresses unity and bipartisan collaboration, which slightly moderates
+its alignment with extreme left positions.
 </td>
 
 </tr>
