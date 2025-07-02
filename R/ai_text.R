@@ -1,4 +1,4 @@
-#' Structured AI analysis texts
+#' Structured AI analysis of texts
 #'
 #' This function applies AI-assisted analysis to each document in a character
 #' vector or a docvar in a [corpus][quanteda::corpus()], using a structured
@@ -37,7 +37,7 @@ ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
   if (!is.character(.data))
     stop("Unsupported data type for ai_text")
 
-  args <- rlang::list2()
+  args <- rlang::list2(...)
 
   if (is.null(names(.data))) names(.data) <- as.character(seq_along(.data))
 
@@ -65,10 +65,6 @@ ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
     }
   }
 
-  if (!"model" %in% names(args) && identical(chat_fn, chat_openai)) {
-    args <- c(args, list(model = "gpt-4o"))
-  }
-
   chat <- suppressMessages(do.call(chat_fn, args))
   model <- chat$get_model()
 
@@ -92,7 +88,9 @@ ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
     })
   }
 
-  df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
+  df_list <- lapply(names(.data), function(doc_id) result_env[[doc_id]])
+  names(df_list) <- names(.data)
+  df_results <- dplyr::bind_rows(df_list, .id = "id")
   rownames(df_results) <- NULL
   if (verbose) cat("Finished.\n")
 

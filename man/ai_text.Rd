@@ -2,7 +2,7 @@
 % Please edit documentation in R/ai_text.R
 \name{ai_text}
 \alias{ai_text}
-\title{Structured AI analysis texts}
+\title{Structured AI analysis of texts}
 \usage{
 ai_text(
   .data,

@@ -24,7 +24,7 @@
 #' }
 #' @export
 ai_salience <- function(.data, topics, chat_fn, ..., verbose = TRUE) {
-
+  
   # Predefine the type_object for salience classification
   predefined_type_object <- type_array(
     "Array of classification results. The scores should sum to 1.",
@@ -33,13 +33,13 @@ ai_salience <- function(.data, topics, chat_fn, ..., verbose = TRUE) {
       score = type_number("The classification score for the category, ranging from 0.0 to 1.0")
     )
   )
-
+  
   # Call ai_text with pre-set type_object and flexible arguments
   ai_text(
-      .data = .data,
-      chat_fn = chat_fn,
-      type_object = predefined_type_object,
-      verbose = verbose,
-      ...
+    .data = .data,
+    chat_fn = chat_fn,
+    type_object = predefined_type_object,
+    verbose = verbose,
+    ...
   )
 }

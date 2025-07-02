@@ -2,8 +2,8 @@
 % Please edit documentation in R/ai_validate.R
 \name{ai_validate}
 \alias{ai_validate}
-\title{Starts an interactive app to manually validate the documents in a corpus
-which were summarized, labelled, or scored by an LLM.}
+\title{Starts an interactive app to manually validate the output of an LLM
+stored in a character vector}
 \usage{
 ai_validate(
   text,
@@ -21,7 +21,8 @@ documents to be manually validated}
 \item{llm_output}{a character string; the name of the LLM output column which
 contains the summaries, labels, or scores to be validated}
 
-\item{llm_evidence}{\strong{to be documented}}
+\item{llm_evidence}{a character vector; the name of an additional LLM output
+such as evidence or justifications provided by the LLM}
 
 \item{result_env}{An environment to store results and allow resuming}
 
@@ -35,6 +36,8 @@ equal to the number of input documents, with the elements named with the
 input element names
 }
 \description{
+This function launches a Shiny app that allows users to manually validate
+the output of a LLM analysis, such as ai_score
 The comments from manual validation for each text are added as an additional
 docvar to the input data with all texts not yet validated as \code{NA}.
 }

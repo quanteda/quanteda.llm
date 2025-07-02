@@ -1,13 +1,16 @@
-#' Starts an interactive app to manually validate the documents in a corpus
-#' which were summarized, labelled, or scored by an LLM.
+#' Starts an interactive app to manually validate the output of an LLM
+#' stored in a character vector 
 #'
+#' This function launches a Shiny app that allows users to manually validate
+#' the output of a LLM analysis, such as ai_score
 #' The comments from manual validation for each text are added as an additional
 #' docvar to the input data with all texts not yet validated as `NA`.
 #' @param text a character or [quanteda::corpus] object containing the
 #'   documents to be manually validated
 #' @param llm_output a character string; the name of the LLM output column which
 #'   contains the summaries, labels, or scores to be validated
-#' @param llm_evidence **to be documented**
+#' @param llm_evidence a character vector; the name of an additional LLM output
+#' such as evidence or justifications provided by the LLM 
 #' @param verbose logical; output a progress indicator if `TRUE`
 #' @inheritParams ai_text
 #' @return character; the response from the manual validation with a length
