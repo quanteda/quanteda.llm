@@ -32,7 +32,10 @@
 #' @importFrom glue glue
 #' @export
 ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
-                    verbose = TRUE, result_env = new.env()) {
+                    verbose = TRUE, result_env = NULL) {
+  
+  # --- Ensure result_env is valid before anything else uses it ---
+  if (is.null(result_env)) result_env <- new.env()
 
   if (!is.character(.data))
     stop("Unsupported data type for ai_text")

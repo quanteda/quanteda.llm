@@ -11,7 +11,7 @@ ai_text(
   type_object,
   few_shot_examples = NULL,
   verbose = TRUE,
-  result_env = new.env()
+  result_env = NULL
 )
 }
 \arguments{
