@@ -11,7 +11,8 @@ Support for linking LLM analysis with quanteda.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://quanteda.github.io/quanteda.llm/}
+  \item \url{https://github.com/quanteda/quanteda.llm}
+  \item Report bugs at \url{https://quanteda.github.io/quanteda.llm/issues}
 }
 
 }

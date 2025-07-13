@@ -1,0 +1,47 @@
+---
+title: "Example: Scaling texts"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `ai_score()` function allows you to score documents based on a predefined scale. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a score for each document based on the specified scale as well as a short justification for the score. This function is useful for evaluating documents against specific criteria or benchmarks. Users need to provide a character vector of documents and a scale to score against. The LLM will then analyze each document and assign a score based on the provided scale, along with a brief explanation of the reasoning behind the score.
+
+### Loading packages and data
+
+```{r getting-started}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+
+data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+```
+
+### Using `ai_score()` for scoring documents
+
+```{r ai_score}
+prompt <- "Score the following document on a scale of how much it aligns 
+with the political left. The political left is defined as groups 
+which advocate for social equality, government intervention in the 
+economy, and progressive policies. Use the following metrics: 
+
+SCORING METRIC: 
+3 : extremely left 
+2 : very left 
+1 : slightly left 
+0 : not at all left"
+
+data_corpus_inaugural <- data_corpus_inaugural %>%
+  mutate(ai_score(text, prompt, chat_fn = chat_openai, model = "gpt-4o",
+                  api_args = list(temperature = 0, seed = 42)))
+
+# score and evidence are created as new docvars in the corpus
+library(kableExtra)
+cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
+      select(docvars(data_corpus_inaugural), score, evidence)) %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(3) 
+```

@@ -1,6 +1,7 @@
 url: https://quanteda.github.io/quanteda.llm/
 template:
   bootstrap: 5
+
 get_started:
   template: getting-started.html
 
@@ -8,10 +9,38 @@ navbar:
   structure:
     left:
       - home
+      - quick-start
       - reference
-      - articles
+      - examples
     right:
       - github
 
+  components:
+    quick-start:
+      text: "Quick Start"
+      menu:
+        - text: "Quick Start Guide"
+          href: articles/getting-started.html
 
+    reference:
+      text: "Reference"
+      href: reference/index.html
+
+    examples:
+      text: "Examples"
+      menu:
+        - text: "Summarizing texts"
+          href: articles/pkgdown/examples/summarizing.html
+        - text: "Salience rating of topics"
+          href: articles/pkgdown/examples/salience.html
+        - text: "Scaling texts"
+          href: articles/pkgdown/examples/scoring.html
+        - text: "Structuring LLM responses for text analysis"
+          href: articles/pkgdown/examples/structuring.html
+        - text: "Validating LLM responses"
+          href: articles/pkgdown/examples/validating.html
+
+    github:
+      icon: "fab fa-github"
+      href: https://github.com/quanteda/quanteda.llm
 

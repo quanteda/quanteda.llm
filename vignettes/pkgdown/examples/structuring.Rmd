@@ -1,0 +1,55 @@
+---
+title: "Example: Structuring LLM responses for text analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The package allows you to structure the responses from LLMs in a way that is compatible with `quanteda`'s corpus principles and useful for common text analysis tasks. This means you can easily integrate LLM-generated data into your text analysis workflows. For example, you can ask an LLM to summarize all documents in a corpus (`ai_summary()`) and store the summaries as document variables, or you can classify documents into topics (`ai_salience()`) or scale them based on predefined criteria (`ai_scale()`) and store the results as document variables. 
+
+If you need more flexibility in how the LLM generates its output, you can use the `ai_text()` function to define custom prompts and response structures. With `ai_text()` and the help of the `type_object()` argument from the `ellmer` package, you can define how the LLM should format its output, such as specifying the fields to include in the response or the format of the response itself. This flexibility enables you to tailor the LLM's output to your analysis requirements, making it easier to integrate LLM-generated data into your text analysis workflows.
+
+### Loading packages and data
+
+```{r getting-started}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+
+data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+```
+
+### Using `ai_text()` for scoring documents
+
+```{r ai_text}
+
+prompt <- "Score the following document on a scale of how much it aligns
+with the political left. The political left is defined as groups which
+advocate for social equality, government intervention in the economy,
+and progressive policies. Use the following metrics:
+SCORING METRIC:
+3 : extremely left
+2 : very left
+1 : slightly left
+0 : not at all left"
+
+# define the structure of the response
+policy_scores <- type_object(
+  score = type_integer(),
+  evidence = type_string())
+
+data_corpus_inaugural <- data_corpus_inaugural %>%
+  mutate(ai_text(text, chat_fn = chat_openai, model = "gpt-4o", type_object = policy_scores,
+                 system_prompt = prompt,
+                  api_args = list(temperature = 0, seed = 42)))
+
+# score and evidence are created as new docvars in the corpus
+library(kableExtra)
+cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
+      select(docvars(data_corpus_inaugural), score, evidence)) %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(3) 
+```

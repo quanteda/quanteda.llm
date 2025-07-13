@@ -24,7 +24,9 @@ knitr::opts_chunk$set(
 [![pkgdown](https://img.shields.io/badge/pkgdown-site-blue)](https://quanteda.github.io/quanteda.llm/)
 <!-- badges: end -->
 
-The **quanteda.llm** package makes it easy to use LLMs with quanteda.corpora (or data frames), to enable classification, summarisation, scoring, and analysis of documents and text. **quanteda** provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents.  **quanteda.llm** makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new **quanteda.tidy** package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created obejcts and variables.
+The **quanteda.llm** package makes it easy to use LLMs with [quanteda](https://quanteda.io/) corpora (or character vectors and data frames), to enable classification, summarisation, scoring, and analysis of documents and text. **quanteda** provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents.  **quanteda.llm** makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new **quanteda.tidy** package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created objects and variables.
+
+
 
 # Included functions
 
@@ -104,75 +106,15 @@ pak::pak("quanteda/quanteda.llm")
 pak::pak("quanteda/quanteda.tidy")
 ```
 
-```{r getting-started}
-library(quanteda)
-library(quanteda.llm)
-library(quanteda.tidy)
+## Example use
 
-data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
-```
+To learn more about how to use the package, please refer to the following examples:
 
-## Examples
+- [Summarizing texts with LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/summarizing.html)
+- [Salience ratings of topics in texts with LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/salience.html)
+- [Scoring texts with LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/scoring.html)
+- [Structuring LLM responses for text analysis](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/structuring.html)
+- [Validating LLM responses](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/validating.html)
 
-### Using `ai_summary()` for summarization of documents
 
-```{r ai_summary}
-# creates a new docvar "summary"
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_summary(text, chat_fn = chat_openai, model = "gpt-4o",
-                    api_args = list(temperature = 0, seed = 42)))
 
-library(kableExtra)
-cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
-      summary = data_corpus_inaugural$summary) %>%
-  kable("html", escape = FALSE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  column_spec(2)
-```
-
-### Using `ai_salience()` for salience rating of topics
-
-```{r ai_salience}
-# define the topics for salience classification
-topics <- c("economy", "environment", "healthcare")
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_salience(text, topics, chat_fn = chat_openai, model = "gpt-4o",
-                     api_args = list(temperature = 0, seed = 42)))
-
-# topic and score are created as new docvars in the corpus
-glimpse(data_corpus_inaugural)
-```
-
-### Using `ai_score()` for scoring documents
-
-```{r ai_score}
-prompt <- "Score the following document on a scale of how much it aligns
-with the political left. The political left is defined as groups which
-advocate for social equality, government intervention in the economy,
-and progressive policies. Use the following metrics:
-SCORING METRIC:
-3 : extremely left
-2 : very left
-1 : slightly left
-0 : not at all left"
-
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_score(text, prompt, chat_fn = chat_openai, model = "gpt-4o",
-                  api_args = list(temperature = 0, seed = 42)))
-
-# score and evidence are created as new docvars in the corpus
-cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
-      select(docvars(data_corpus_inaugural), score, evidence)) %>%
-  kable("html", escape = FALSE) %>%
-  kable_styling(bootstrap_options = c("striped", "hover")) %>%
-  column_spec(3) 
-```
-
-### Using `ai_validate()` to manually check LLM-generated outputs
-
-```{r ai_validate, eval = FALSE}
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_validate(text, score, evidence))
-# validated scores and comments as well as highlighted examples from texts are
-# created as new docvars in the corpus 
-```

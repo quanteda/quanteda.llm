@@ -1,0 +1,33 @@
+---
+title: "Example: Salience rating of topics"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `ai_salience()` function allows you to classify documents based on their relevance to predefined topics. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a list of topics and their salience scores for each document. This function is particularly useful for analyzing large corpora where manual classification would be impractical. Users need to provide a character vector of documents and a list of topics to classify. The LLM will then analyze each document and assign a salience score to each topic, indicating how relevant the document is to that topic.
+
+### Loading packages and data
+
+```{r getting-started}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+
+data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+```
+
+### Using `ai_salience()` for salience rating of topics
+
+```{r ai_salience}
+# define the topics for salience classification
+topics <- c("economy", "environment", "healthcare")
+data_corpus_inaugural <- data_corpus_inaugural %>%
+  mutate(ai_salience(text, topics, chat_fn = chat_openai, model = "gpt-4o",
+                     api_args = list(temperature = 0, seed = 42)))
+
+# topic and score are created as new docvars in the corpus
+glimpse(data_corpus_inaugural)
+```

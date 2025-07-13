@@ -1,0 +1,36 @@
+---
+title: "Example: Summarizing texts"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+The `ai_summary()` function allows you to summarize documents using an LLM. It generates a summary for each document in a character vector and stores it as a new character vector which can be added as a document variable in a `quanteda` corpus element. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing succinct summaries of each document. Users need to provide a character vector of documents to summarize and choose the LLM provider they want to use for summarization.
+
+### Loading packages and data
+
+```{r getting-started}
+library(quanteda)
+library(quanteda.llm)
+library(quanteda.tidy)
+
+data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+```
+
+### Using `ai_summary()` for summarization of documents
+
+```{r ai_summary}
+# creates a new docvar "summary"
+data_corpus_inaugural <- data_corpus_inaugural %>%
+  mutate(ai_summary(text, chat_fn = chat_openai, model = "gpt-4o",
+                    api_args = list(temperature = 0, seed = 42)))
+
+library(kableExtra)
+cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
+      summary = data_corpus_inaugural$summary) %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(2)
+```

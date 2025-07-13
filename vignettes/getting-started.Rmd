@@ -40,6 +40,8 @@ If you need more flexibility in how the LLM generates its output, you can use th
 
 This vignette provides a brief overview of how to use the `quanteda.llm` package for analyzing texts with LLMs. The following examples demonstrate how to summarize documents, classify topics, and score documents using LLMs. At the end, we will also show how to validate LLM responses manually and customize the structure of LLM responses for more advanced text analysis tasks.
 
+For more detailed examples including **code snippets**, please refer to the section [Examples]().
+
 ### Summarizing documents
 
 The `ai_summary()` function allows you to summarize documents using an LLM. It generates a summary for each document in a character vector and stores it as a new character vector which can be added as a document variable in a `quanteda` corpus element. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing succinct summaries of each document. Users need to provide a character vector of documents to summarize and choose the LLM provider they want to use for summarization.
