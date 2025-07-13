@@ -8,6 +8,13 @@
 \description{
 Support for linking LLM analysis with quanteda.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://quanteda.github.io/quanteda.llm/}
+}
+
+}
 \author{
 \strong{Maintainer}: Seraphine F. Maerz \email{seraphine.maerz@unimelb.edu.au}
 

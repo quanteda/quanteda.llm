@@ -31,8 +31,8 @@
 #' }
 #' @importFrom glue glue
 #' @export
-ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
-                    verbose = TRUE, result_env = NULL) {
+ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
+                    verbose = TRUE, result_env = NULL, ...) {
   
   # --- Ensure result_env is valid before anything else uses it ---
   if (is.null(result_env)) result_env <- new.env()
@@ -91,9 +91,7 @@ ai_text <- function(.data, chat_fn, ..., type_object, few_shot_examples = NULL,
     })
   }
 
-  df_list <- lapply(names(.data), function(doc_id) result_env[[doc_id]])
-  names(df_list) <- names(.data)
-  df_results <- dplyr::bind_rows(df_list, .id = "id")
+  df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
   rownames(df_results) <- NULL
   if (verbose) cat("Finished.\n")
 

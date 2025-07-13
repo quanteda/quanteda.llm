@@ -1,17 +1,17 @@
 Package: quanteda.llm
 Type: Package
 Title: LLM support for quanteda
-Version: 0.4.1
+Version: 0.4.2
 Authors@R: c(
     person(
       "Seraphine F.", "Maerz",
       email = "seraphine.maerz@unimelb.edu.au",
-      role = c("aut", "cre")
+      role = c("aut", "cre"), comment = c(ORCID = "0000-0002-7173-9617")
     ),
     person(
       "Kenneth", "Benoit",
       email = "kbenoit@smu.edu.sg",
-      role = c("aut")
+      role = c("aut"), comment = c(ORCID = "0000-0002-0797-564X")
     )
   )
 Description: Support for linking LLM analysis with quanteda.
@@ -29,9 +29,15 @@ Imports:
 Suggests: 
     spelling,
     testthat (>= 3.0.0),
-    Rcpp
+    Rcpp,
+    knitr,
+    rmarkdown,
+    quanteda.llm,
+    kableExtra
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr
+URL: https://quanteda.github.io/quanteda.llm/

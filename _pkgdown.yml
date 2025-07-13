@@ -1,0 +1,6 @@
+url: https://quanteda.github.io/quanteda.llm/
+template:
+  bootstrap: 5
+get_started:
+  template: getting-started.html
+

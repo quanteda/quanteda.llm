@@ -7,11 +7,11 @@
 ai_text(
   .data,
   chat_fn,
-  ...,
   type_object,
   few_shot_examples = NULL,
   verbose = TRUE,
-  result_env = NULL
+  result_env = NULL,
+  ...
 )
 }
 \arguments{
@@ -19,8 +19,6 @@ ai_text(
 
 \item{chat_fn}{A function like \link[ellmer:chat_openai]{chat_openai()}. See
 \url{https://ellmer.tidyverse.org/articles/structured-data.html} for details.}
-
-\item{...}{additional arguments passed to \code{chat_fn}}
 
 \item{type_object}{an \pkg{ellmer} \link[ellmer:type_boolean]{type_object()}}
 
@@ -30,6 +28,8 @@ ai_text(
 \item{verbose}{logical; whether to print progress}
 
 \item{result_env}{An environment to store results and allow resuming}
+
+\item{...}{additional arguments passed to \code{chat_fn}}
 }
 \value{
 character; the response from the LLM with a length equal to the

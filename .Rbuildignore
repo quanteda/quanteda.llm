@@ -4,3 +4,8 @@
 ^README\.Rmd$
 ^.*\.Rout$
 ^.*\.Rout\.save$
+^doc$
+^Meta$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
