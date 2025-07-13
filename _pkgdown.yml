@@ -4,3 +4,14 @@ template:
 get_started:
   template: getting-started.html
 
+navbar:
+  structure:
+    left:
+      - home
+      - reference
+      - articles
+    right:
+      - github
+
+
+

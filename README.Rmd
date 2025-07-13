@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/quanteda.llm)](https://CRAN.R-project.org/package=quanteda.llm)
 [![R-CMD-check](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/quanteda/quanteda.llm/graph/badge.svg)](https://app.codecov.io/gh/quanteda/quanteda.llm)
+[![pkgdown](https://img.shields.io/badge/pkgdown-site-blue)](https://quanteda.github.io/quanteda.llm/)
 <!-- badges: end -->
 
 The **quanteda.llm** package makes it easy to use LLMs with quanteda.corpora (or data frames), to enable classification, summarisation, scoring, and analysis of documents and text. **quanteda** provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents.  **quanteda.llm** makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new **quanteda.tidy** package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created obejcts and variables.

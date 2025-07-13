@@ -16,11 +16,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Seraphine F. Maerz \email{seraphine.maerz@unimelb.edu.au}
+\strong{Maintainer}: Seraphine F. Maerz \email{seraphine.maerz@unimelb.edu.au} (\href{https://orcid.org/0000-0002-7173-9617}{ORCID})
 
 Authors:
 \itemize{
-  \item Kenneth Benoit \email{kbenoit@smu.edu.sg}
+  \item Kenneth Benoit \email{kbenoit@smu.edu.sg} (\href{https://orcid.org/0000-0002-0797-564X}{ORCID})
 }
 
 }

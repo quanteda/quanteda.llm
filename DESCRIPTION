@@ -40,4 +40,5 @@ Language: en-GB
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-URL: https://quanteda.github.io/quanteda.llm/
+URL: https://github.com/quanteda/quanteda.llm
+BugReports: https://quanteda.github.io/quanteda.llm/issues

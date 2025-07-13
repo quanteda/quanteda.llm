@@ -12,6 +12,7 @@ status](https://www.r-pkg.org/badges/version/quanteda.llm)](https://CRAN.R-proje
 [![R-CMD-check](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/quanteda/quanteda.llm/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/quanteda/quanteda.llm/graph/badge.svg)](https://app.codecov.io/gh/quanteda/quanteda.llm)
+[![pkgdown](https://img.shields.io/badge/pkgdown-site-blue)](https://quanteda.github.io/quanteda.llm/)
 <!-- badges: end -->
 
 The **quanteda.llm** package makes it easy to use LLMs with
@@ -112,10 +113,10 @@ pak::pak("quanteda/quanteda.tidy")
 
 ``` r
 library(quanteda)
-#> Package version: 4.3.1
+#> Package version: 4.3.0
 #> Unicode version: 14.0
 #> ICU version: 71.1
-#> Parallel computing: 10 of 10 threads used.
+#> Parallel computing: disabled
 #> See https://quanteda.io for tutorials and examples.
 library(quanteda.llm)
 #> Loading required package: ellmer
@@ -153,7 +154,7 @@ cbind(data.frame(docnames = docnames(data_corpus_inaugural)),
   column_spec(2)
 ```
 
-<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<table class="table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
 
 <thead>
 
@@ -184,39 +185,14 @@ summary
 
 <td style="text-align:left;">
 
-The document is an inaugural address in which the speaker emphasizes a
-national effort to rebuild the country and restore its promise for all
-citizens. The speaker criticizes past administrations for benefiting a
-small group in Washington while neglecting the broader population,
-resulting in job loss and economic decline. The promise of the speech is
-to transfer power back to the people, emphasizing ‘America first’
-policies. Key themes include protecting US borders, revitalizing
-infrastructure, enhancing national pride, and enhancing American
-industry and employment. The speech concludes with a call for unity and
-a commitment to making America strong, wealthy, proud, and safe again.
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-2021-Biden
-</td>
-
-<td style="text-align:left;">
-
-The speech is a call for unity and commitment to overcoming current
-challenges in the United States, including a health crisis, political
-divisions, racial injustice, and climate change. The speaker emphasizes
-the importance of democracy, resilience, and collective action in
-addressing these issues. They acknowledge past struggles and triumphs,
-reiterating the need for unity and truth to secure a better future. The
-speech invokes historical moments and figures to inspire resolve and
-purpose, encouraging all Americans to work together for the common good.
-The address concludes with a pledge to serve all Americans and a call
-for prayers and a moment of silence for those lost to the pandemic.
+This document is a speech delivered by a U.S. President during an
+inauguration ceremony. The speech emphasizes a commitment to returning
+power to the American people, highlighting a vision of national renewal
+and unity. It criticizes past political establishments for failing to
+serve the citizens and promises to prioritize American interests,
+focusing on economic revitalization, infrastructure development, and
+national security. The speech calls for unity, patriotism, and action,
+aiming to restore America’s strength, prosperity, and global standing.
 </td>
 
 </tr>
@@ -230,25 +206,37 @@ for prayers and a moment of silence for those lost to the pandemic.
 
 <td style="text-align:left;">
 
-This document appears to be a speech by Donald Trump, addressing various
-political figures and the public, marking the beginning of his new
-presidential term. In his address, he outlines his agenda which includes
-prioritizing “America first,” restoring national sovereignty, and
-ensuring safety by ending the weaponization of the Justice Department.
-He aims to confront issues of national trust, immigration, public
-safety, and the economy, including initiatives like declaring
-emergencies at the southern border and energy industry reforms to boost
-domestic production.
+The document is a speech emphasizing the importance of democracy, unity,
+and the peaceful transfer of power in the United States. It acknowledges
+the challenges faced by the nation, including the COVID-19 pandemic,
+racial injustice, political extremism, and climate change. The speaker
+calls for unity and collective action to overcome these issues,
+highlighting the resilience of the American people and the need to
+uphold truth and justice. The speech also pays tribute to past leaders
+and the sacrifices made by Americans, urging the nation to work together
+to build a better future.
+</td>
 
-Trump announces measures to restore what he perceives as lost American
-values and promotes national unity, prosperity, and greatness. He refers
-to his election as a mandate to reverse prior policies, citing support
-from diverse demographic groups. Trump’s agenda further emphasizes
-strengthening the military, revamping trade relations via tariffs, and
-addressing environmental and educational policies according to his
-vision. The speech conveys a rallying call to renew American pride and
-strength, framing his administration as a transformative era for the
-United States.
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2021-Biden.txt
+</td>
+
+<td style="text-align:left;">
+
+The document is a speech emphasizing the importance of democracy, unity,
+and the peaceful transfer of power in the United States. It acknowledges
+the challenges faced by the nation, including the COVID-19 pandemic,
+racial injustice, political extremism, and climate change. The speaker
+calls for unity and collective action to overcome these issues,
+highlighting the resilience of the American people and the need to
+uphold truth and justice. The speech also pays tribute to past leaders
+and the sacrifices made by Americans, urging the nation to work together
+to build a better future.
 </td>
 
 </tr>
@@ -276,20 +264,20 @@ data_corpus_inaugural <- data_corpus_inaugural %>%
 glimpse(data_corpus_inaugural)
 #> Rows: 3
 #> Columns: 14
-#> $ doc_id    <chr> "2017-Trump", "2021-Biden", "2025-Trump"
-#> $ text      <chr> "Chief Just…", "Chief Just…", "Thank you.…"
+#> $ doc_id    <chr> "2017-Trump", "2025-Trump", "2021-Biden.txt"
+#> $ text      <chr> "Chief Just…", "Chief Just…", "Chief Just…"
 #> $ Year      <int> 2017, 2021, 2025
 #> $ President <chr> "Trump", "Biden", "Trump"
 #> $ FirstName <chr> "Donald J.", "Joseph R.", "Donald J."
 #> $ Party     <fct> Republican, Democratic, Republican
 #> $ id        <chr> "1", "2", "3"
-#> $ summary   <chr> "The document is an inaugural address in which the speaker e…
+#> $ summary   <chr> "This document is a speech delivered by a U.S. President dur…
 #> $ topic1    <dbl> 1, 1, 1
 #> $ topic2    <dbl> 2, 2, 2
 #> $ topic3    <dbl> 3, 3, 3
-#> $ score1    <dbl> 0.7, 0.2, 0.4
-#> $ score2    <dbl> 0.10, 0.35, 0.30
-#> $ score3    <dbl> 0.20, 0.45, 0.30
+#> $ score1    <dbl> 0.6, 0.2, 0.2
+#> $ score2    <dbl> 0.1, 0.3, 0.2
+#> $ score3    <dbl> 0.3, 0.5, 0.6
 ```
 
 ### Using `ai_score()` for scoring documents
@@ -323,7 +311,7 @@ cbind(data.frame(docnames = docnames(data_corpus_inaugural)),
   column_spec(3) 
 ```
 
-<table class="table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<table class="table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
 
 <thead>
 
@@ -364,42 +352,16 @@ evidence
 
 <td style="text-align:left;">
 
-The document represents a speech that emphasizes nationalism, populism,
-and protectionism, reflecting right-wing and conservative ideologies
-rather than leftist ones. The speech highlights transferring power away
-from the political establishment to the people, criticizes foreign
-engagements, and advocates for ‘America first’ policies, focusing on
-national strength and pride. These elements do not align with the
-political left’s focus on global cooperation and progressive social
-policies.
-</td>
-
-</tr>
-
-<tr>
-
-<td style="text-align:left;">
-
-2021-Biden
-</td>
-
-<td style="text-align:left;">
-
-2
-</td>
-
-<td style="text-align:left;">
-
-The document, which is a speech, emphasizes themes of unity, social
-justice, racial equality, and combating climate change - all causes
-typically associated with the political left. It stresses the need to
-address systemic racism, a ‘cry for racial justice,’ and the existential
-threat posed by climate change. The call for restoring alliances and
-focusing on unity and collective action aligns with leftist principles
-of international cooperation and social equality. The repeated calls for
-unity and healing from recent national divisions, while not explicitly
-leftist, are set in contrast to addressing right-leaning extremism and
-white supremacy.
+The document emphasizes themes of nationalism, protectionism, and a
+focus on American interests, which are typically associated with
+right-wing political ideologies. It criticizes the political
+establishment and globalism, advocating for policies like ‘America
+First’ and ‘buy American, hire American.’ These positions do not align
+with the political left, which generally supports international
+cooperation, social equality, and government intervention in the economy
+to address social issues. The speech also highlights a strong allegiance
+to the military and law enforcement, further distancing it from leftist
+ideologies.
 </td>
 
 </tr>
@@ -413,19 +375,45 @@ white supremacy.
 
 <td style="text-align:left;">
 
-0
+2
 </td>
 
 <td style="text-align:left;">
 
-The document aligns with right-wing political ideology, emphasizing
-national sovereignty, reduction in government intervention (e.g., ending
-the Green New Deal), and traditional values. The speech prioritizes
-America First policies, a strong military, and economic nationalism,
-including tariffs and energy independence. These points of focus
-contrast with left-wing advocacy for social equality, economic
-regulation, and progressive policies. Thus, the score regarding how much
-this document aligns with the political left is 0: not at all left.
+The document emphasizes themes of unity, social justice, and government
+responsibility, which align with left-leaning values. It highlights the
+need to address racial justice, climate change, and economic inequality,
+advocating for collective action and government intervention. The call
+for unity and healing, while not exclusively leftist, is framed in the
+context of overcoming systemic issues, which are often championed by the
+political left. The speech also references historical struggles for
+equality and justice, further aligning with progressive ideals.
+</td>
+
+</tr>
+
+<tr>
+
+<td style="text-align:left;">
+
+2021-Biden.txt
+</td>
+
+<td style="text-align:left;">
+
+2
+</td>
+
+<td style="text-align:left;">
+
+The document emphasizes themes of unity, social justice, and government
+intervention, which align with left-leaning political ideologies. It
+highlights the need to address racial justice, climate change, and
+economic inequality, all of which are typically associated with
+progressive policies. The call for unity and healing, while not
+exclusively leftist, is framed in the context of overcoming systemic
+issues and promoting social equality, further supporting a left-leaning
+perspective.
 </td>
 
 </tr>
