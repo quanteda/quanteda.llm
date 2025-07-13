@@ -32,7 +32,8 @@ Suggests:
     Rcpp,
     knitr,
     rmarkdown,
-    quanteda.llm,
+    quanteda,
+    quanteda.tidy,
     kableExtra
 Config/testthat/edition: 3
 Encoding: UTF-8

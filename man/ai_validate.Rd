@@ -11,7 +11,8 @@ ai_validate(
   llm_evidence = NULL,
   result_env = new.env(),
   ...,
-  verbose = TRUE
+  verbose = TRUE,
+  launch_app = TRUE
 )
 }
 \arguments{
@@ -29,6 +30,8 @@ such as evidence or justifications provided by the LLM}
 \item{...}{additional arguments passed to \code{chat_fn}}
 
 \item{verbose}{logical; output a progress indicator if \code{TRUE}}
+
+\item{launch_app}{Logical, whether to launch the interactive Shiny app. Defaults to TRUE.}
 }
 \value{
 character; the response from the manual validation with a length
