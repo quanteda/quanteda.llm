@@ -22,11 +22,11 @@ Depends:
 Remotes: 
     github::quanteda/quanteda.tidy
 Imports: 
-    dplyr,
     glue,
     rlang,
     shiny
 Suggests: 
+    dplyr,
     spelling,
     testthat (>= 3.0.0),
     Rcpp,

@@ -33,7 +33,7 @@
 #' @export
 ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
                     verbose = TRUE, result_env = NULL, ...) {
-  
+
   # --- Ensure result_env is valid before anything else uses it ---
   if (is.null(result_env)) result_env <- new.env()
 
@@ -91,14 +91,17 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     })
   }
 
-  df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
+  # df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
+  df_results <- do.call(rbind, Map(cbind, id = names(result_env), as.list(result_env)))
   rownames(df_results) <- NULL
-  
+
+
+
   # Warn if any response is empty
   empty_docs <- vapply(result_env, function(x) {
     all(vapply(x, function(col) all(nzchar(col) == FALSE), logical(1)))
   }, logical(1))
-  
+
   if (any(empty_docs)) {
     warning(
       "One or more documents returned empty responses. ",
@@ -108,8 +111,8 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
       "Please check both your API setup and whether your input text is too long."
     )
   }
-  
+
   if (verbose) cat("Finished.\n")
-  
+
   return(df_results)
 }
