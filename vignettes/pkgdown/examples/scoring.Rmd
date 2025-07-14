@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The `ai_score()` function allows you to score documents based on a predefined scale. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a score for each document based on the specified scale as well as a short justification for the score. This function is useful for evaluating documents against specific criteria or benchmarks. Users need to provide a character vector of documents and a scale to score against. The LLM will then analyze each document and assign a score based on the provided scale, along with a brief explanation of the reasoning behind the score.
+The `ai_score()` function allows you to score documents based on a predefined scale. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a score for each document based on the specified scale as well as a short justification for the score. This function is useful for evaluating documents against specific criteria or benchmarks. Users need to provide a character vector of documents and a scale to score against. The LLM will then analyse each document and assign a score based on the provided scale, along with a brief explanation of the reasoning behind the score.
 
 ### Loading packages and data
 

@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-The `ai_salience()` function allows you to classify documents based on their relevance to predefined topics. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a list of topics and their salience scores for each document. This function is particularly useful for analyzing large corpora where manual classification would be impractical. Users need to provide a character vector of documents and a list of topics to classify. The LLM will then analyze each document and assign a salience score to each topic, indicating how relevant the document is to that topic.
+The `ai_salience()` function allows you to classify documents based on their relevance to predefined topics. The function uses a predefined `type_object` argument from `ellmer` to structure the LLM's response, producing a list of topics and their salience scores for each document. This function is particularly useful for analysing large corpora where manual classification would be impractical. Users need to provide a character vector of documents and a list of topics to classify. The LLM will then analyse each document and assign a salience score to each topic, indicating how relevant the document is to that topic.
 
 ### Loading packages and data
 

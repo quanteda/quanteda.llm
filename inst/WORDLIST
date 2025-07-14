@@ -1,6 +1,5 @@
 AWS
 Anthropic’s
-Biden
 CMD
 Cloudflare
 Codecov
@@ -8,8 +7,10 @@ Databricks
 DeepSeek
 Groq
 LLM
+LLM's
 LLMs
 Lifecycle
+ORCID
 Ollama
 OpenAI
 OpenRouter
@@ -17,12 +18,8 @@ Seraphine
 Tidyverse
 VLLM
 ai
-docnames
 docvar
-first’
-left’s
 llm
-obejcts
 ollama
+pkgdown
 quanteda
-’
