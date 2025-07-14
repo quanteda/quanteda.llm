@@ -31,16 +31,26 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-quick-start" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Quick Start</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-quick-start">
+<li><a class="dropdown-item" href="articles/getting-started.html">Quick Start Guide</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/getting-started.html">Getting started with quanteda.llm</a></li>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-examples" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Examples</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-examples">
+<li><a class="dropdown-item" href="articles/pkgdown/examples/summarizing.html">Summarizing texts</a></li>
+    <li><a class="dropdown-item" href="articles/pkgdown/examples/salience.html">Salience rating of topics</a></li>
+    <li><a class="dropdown-item" href="articles/pkgdown/examples/scoring.html">Scaling texts</a></li>
+    <li><a class="dropdown-item" href="articles/pkgdown/examples/structuring.html">Structuring LLM responses for text analysis</a></li>
+    <li><a class="dropdown-item" href="articles/pkgdown/examples/validating.html">Validating LLM responses</a></li>
   </ul>
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
 
@@ -53,7 +63,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>The <strong>quanteda.llm</strong> package makes it easy to use LLMs with quanteda.corpora (or data frames), to enable classification, summarisation, scoring, and analysis of documents and text. <strong>quanteda</strong> provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents. <strong>quanteda.llm</strong> makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new <strong>quanteda.tidy</strong> package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created obejcts and variables.</p>
+<p>The <strong>quanteda.llm</strong> package makes it easy to use LLMs with <a href="https://quanteda.io/" class="external-link">quanteda</a> corpora (or character vectors and data frames), to enable classification, summarisation, scoring, and analysis of documents and text. <strong>quanteda</strong> provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents. <strong>quanteda.llm</strong> makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new <strong>quanteda.tidy</strong> package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created objects and variables.</p>
 </div>
 <div class="section level1">
 <h1 id="included-functions">Included functions<a class="anchor" aria-label="anchor" href="#included-functions"></a>
@@ -65,7 +75,7 @@
 <ul>
 <li>A generic function that can be used with any LLM supported by <code>ellmer</code>.</li>
 <li>Generates structured responses or classifications based on pre-defined instructions for texts in a <code>quanteda corpus</code>.</li>
-<li>Users can flexibly define prompts and structure of responses via <code><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object()</a></code> from the <a href="https://ellmer.tidyverse.org/articles/structured-data.html" class="external-link"><code>ellmer</code> package</a>.</li>
+<li>Users can flexibly define prompts and structure of responses via <code>type_object()</code> from the <a href="https://ellmer.tidyverse.org/articles/structured-data.html" class="external-link"><code>ellmer</code> package</a>.</li>
 <li>Users can add a dataset with examples to improve LLM performance (few-shot prompting)</li>
 <li>Supports resuming interrupted processes in a <code>result_env</code> environment.</li>
 </ul>
@@ -82,21 +92,21 @@
 <code><a href="reference/ai_summary.html">ai_summary()</a></code>:
 <ul>
 <li>A wrapper around <code><a href="reference/ai_text.html">ai_text()</a></code> for summarizing documents in a corpus.</li>
-<li>Uses a pre-defined <code><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object()</a></code> to structure the summary output.</li>
+<li>Uses a pre-defined <code>type_object()</code> to structure the summary output.</li>
 </ul>
 </li>
 <li>
 <code><a href="reference/ai_salience.html">ai_salience()</a></code>:
 <ul>
 <li>A wrapper around <code><a href="reference/ai_text.html">ai_text()</a></code> for computing salience scores for topics in a corpus.</li>
-<li>Uses a pre-defined <code><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object()</a></code> to structure the salience classification output.</li>
+<li>Uses a pre-defined <code>type_object()</code> to structure the salience classification output.</li>
 </ul>
 </li>
 <li>
 <code><a href="reference/ai_score.html">ai_score()</a></code>:
 <ul>
 <li>A wrapper around <code><a href="reference/ai_text.html">ai_text()</a></code> for scoring documents based on a scale defined by a prompt.</li>
-<li>Uses a pre-defined <code><a href="https://ellmer.tidyverse.org/reference/type_boolean.html" class="external-link">type_object()</a></code> to structure the scoring output.</li>
+<li>Uses a pre-defined <code>type_object()</code> to structure the scoring output.</li>
 </ul>
 </li>
 </ul>
@@ -106,23 +116,23 @@
 </h1>
 <p>The package supports all LLMs currently available with the <code>ellmer</code> package, including:</p>
 <ul>
-<li>Anthropic’s Claude: <code><a href="https://ellmer.tidyverse.org/reference/chat_anthropic.html" class="external-link">chat_anthropic()</a></code>.</li>
-<li>AWS Bedrock: <code><a href="https://ellmer.tidyverse.org/reference/chat_aws_bedrock.html" class="external-link">chat_aws_bedrock()</a></code>.</li>
-<li>Azure OpenAI: <code><a href="https://ellmer.tidyverse.org/reference/chat_azure_openai.html" class="external-link">chat_azure_openai()</a></code>.</li>
-<li>Cloudflare: <code><a href="https://ellmer.tidyverse.org/reference/chat_cloudflare.html" class="external-link">chat_cloudflare()</a></code>.</li>
-<li>Databricks: <code><a href="https://ellmer.tidyverse.org/reference/chat_databricks.html" class="external-link">chat_databricks()</a></code>.</li>
-<li>DeepSeek: <code><a href="https://ellmer.tidyverse.org/reference/chat_deepseek.html" class="external-link">chat_deepseek()</a></code>.</li>
-<li>GitHub model marketplace: <code><a href="https://ellmer.tidyverse.org/reference/chat_github.html" class="external-link">chat_github()</a></code>.</li>
-<li>Google Gemini/Vertex AI: <code><a href="https://ellmer.tidyverse.org/reference/chat_google_gemini.html" class="external-link">chat_google_gemini()</a></code>, <code><a href="https://ellmer.tidyverse.org/reference/chat_google_gemini.html" class="external-link">chat_google_vertex()</a></code>.</li>
-<li>Groq: <code><a href="https://ellmer.tidyverse.org/reference/chat_groq.html" class="external-link">chat_groq()</a></code>.</li>
-<li>Hugging Face: <code><a href="https://ellmer.tidyverse.org/reference/chat_huggingface.html" class="external-link">chat_huggingface()</a></code>.</li>
-<li>Mistral: <code><a href="https://ellmer.tidyverse.org/reference/chat_mistral.html" class="external-link">chat_mistral()</a></code>.</li>
-<li>Ollama: <code><a href="https://ellmer.tidyverse.org/reference/chat_ollama.html" class="external-link">chat_ollama()</a></code>.</li>
-<li>OpenAI: <code><a href="https://ellmer.tidyverse.org/reference/chat_openai.html" class="external-link">chat_openai()</a></code>.</li>
-<li>OpenRouter: <code><a href="https://ellmer.tidyverse.org/reference/chat_openrouter.html" class="external-link">chat_openrouter()</a></code>.</li>
-<li>perplexity.ai: <code><a href="https://ellmer.tidyverse.org/reference/chat_perplexity.html" class="external-link">chat_perplexity()</a></code>.</li>
-<li>Snowflake Cortex: <code><a href="https://ellmer.tidyverse.org/reference/chat_snowflake.html" class="external-link">chat_snowflake()</a></code> and <code><a href="https://ellmer.tidyverse.org/reference/chat_cortex_analyst.html" class="external-link">chat_cortex_analyst()</a></code>.</li>
-<li>VLLM: <code><a href="https://ellmer.tidyverse.org/reference/chat_vllm.html" class="external-link">chat_vllm()</a></code>.</li>
+<li>Anthropic’s Claude: <code>chat_anthropic()</code>.</li>
+<li>AWS Bedrock: <code>chat_aws_bedrock()</code>.</li>
+<li>Azure OpenAI: <code>chat_azure_openai()</code>.</li>
+<li>Cloudflare: <code>chat_cloudflare()</code>.</li>
+<li>Databricks: <code>chat_databricks()</code>.</li>
+<li>DeepSeek: <code>chat_deepseek()</code>.</li>
+<li>GitHub model marketplace: <code>chat_github()</code>.</li>
+<li>Google Gemini/Vertex AI: <code>chat_google_gemini()</code>, <code>chat_google_vertex()</code>.</li>
+<li>Groq: <code>chat_groq()</code>.</li>
+<li>Hugging Face: <code>chat_huggingface()</code>.</li>
+<li>Mistral: <code>chat_mistral()</code>.</li>
+<li>Ollama: <code>chat_ollama()</code>.</li>
+<li>OpenAI: <code>chat_openai()</code>.</li>
+<li>OpenRouter: <code>chat_openrouter()</code>.</li>
+<li>perplexity.ai: <code>chat_perplexity()</code>.</li>
+<li>Snowflake Cortex: <code>chat_snowflake()</code> and <code>chat_cortex_analyst()</code>.</li>
+<li>VLLM: <code>chat_vllm()</code>.</li>
 </ul>
 <p>For authentication and usage of each of these LLMs, please refer to the respective <code>ellmer</code> documentation <a href="https://ellmer.tidyverse.org/reference/index.html" class="external-link">here</a>. <strong>For example,</strong> to use the <code>chat_openai</code> models, you would need to sign up for an API key from <a href="https://platform.openai.com/playground/prompts" class="external-link">OpenAI</a> which you can save in your <code>.Renviron</code> file as <code>OPENAI_API_KEY</code>. To use the <code>chat_ollama</code> models, first download and install <a href="https://ollama.com/" class="external-link">Ollama</a>. Then install some models either from the command line (e.g. with ollama pull llama3.1) or within R using the <code>rollama</code> package. The Ollama app must be running for the models to be used.</p>
 <div class="section level2">
@@ -133,208 +143,18 @@
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"quanteda/quanteda.llm"</span><span class="op">)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"quanteda/quanteda.tidy"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Package version: 4.3.0</span></span>
-<span><span class="co">#&gt; Unicode version: 14.0</span></span>
-<span><span class="co">#&gt; ICU version: 71.1</span></span>
-<span><span class="co">#&gt; Parallel computing: disabled</span></span>
-<span><span class="co">#&gt; See https://quanteda.io for tutorials and examples.</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/quanteda/quanteda.llm" class="external-link">quanteda.llm</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading required package: ellmer</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">quanteda.tidy</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'quanteda.tidy'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter</span></span>
-<span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
+<h2 id="example-use">Example use<a class="anchor" aria-label="anchor" href="#example-use"></a>
 </h2>
-<div class="section level3">
-<h3 id="using-ai_summary-for-summarization-of-documents">Using <code>ai_summary()</code> for summarization of documents<a class="anchor" aria-label="anchor" href="#using-ai_summary-for-summarization-of-documents"></a>
-</h3>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># creates a new docvar "summary"</span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="reference/ai_summary.html">ai_summary</a></span><span class="op">(</span><span class="va">text</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>                    api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calling chat_fn (gpt-4o):</span></span>
-<span><span class="co">#&gt; ... processing: [1/3]</span></span>
-<span><span class="co">#&gt; ... processing: [2/3]</span></span>
-<span><span class="co">#&gt; ... processing: [3/3]</span></span>
-<span><span class="co">#&gt; Finished.</span></span>
-<span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>docnames <span class="op">=</span> <span class="fu">docnames</span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span><span class="op">)</span>, </span>
-<span>      summary <span class="op">=</span> <span class="va">data_corpus_inaugural</span><span class="op">$</span><span class="va">summary</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="st">"html"</span>, escape <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/column_spec.html" class="external-link">column_spec</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<table class="table table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
-<thead><tr>
-<th style="text-align:left;">
-docnames
-</th>
-<th style="text-align:left;">
-summary
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-2017-Trump
-</td>
-<td style="text-align:left;">
-This document is a speech delivered by a U.S. President during an inauguration ceremony. The speech emphasizes a commitment to returning power to the American people, highlighting a vision of national renewal and unity. It criticizes past political establishments for failing to serve the citizens and promises to prioritize American interests, focusing on economic revitalization, infrastructure development, and national security. The speech calls for unity, patriotism, and action, aiming to restore America’s strength, prosperity, and global standing.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2025-Trump
-</td>
-<td style="text-align:left;">
-The document is a speech emphasizing the importance of democracy, unity, and the peaceful transfer of power in the United States. It acknowledges the challenges faced by the nation, including the COVID-19 pandemic, racial injustice, political extremism, and climate change. The speaker calls for unity and collective action to overcome these issues, highlighting the resilience of the American people and the need to uphold truth and justice. The speech also pays tribute to past leaders and the sacrifices made by Americans, urging the nation to work together to build a better future.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2021-Biden.txt
-</td>
-<td style="text-align:left;">
-The document is a speech emphasizing the importance of democracy, unity, and the peaceful transfer of power in the United States. It acknowledges the challenges faced by the nation, including the COVID-19 pandemic, racial injustice, political extremism, and climate change. The speaker calls for unity and collective action to overcome these issues, highlighting the resilience of the American people and the need to uphold truth and justice. The speech also pays tribute to past leaders and the sacrifices made by Americans, urging the nation to work together to build a better future.
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="using-ai_salience-for-salience-rating-of-topics">Using <code>ai_salience()</code> for salience rating of topics<a class="anchor" aria-label="anchor" href="#using-ai_salience-for-salience-rating-of-topics"></a>
-</h3>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># define the topics for salience classification</span></span>
-<span><span class="va">topics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"economy"</span>, <span class="st">"environment"</span>, <span class="st">"healthcare"</span><span class="op">)</span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="reference/ai_salience.html">ai_salience</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">topics</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>                     api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calling chat_fn (gpt-4o):</span></span>
-<span><span class="co">#&gt; ... processing: [1/3]</span></span>
-<span><span class="co">#&gt; ... processing: [2/3]</span></span>
-<span><span class="co">#&gt; ... processing: [3/3]</span></span>
-<span><span class="co">#&gt; Finished.</span></span>
-<span></span>
-<span><span class="co"># topic and score are created as new docvars in the corpus</span></span>
-<span><span class="fu">glimpse</span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 3</span></span>
-<span><span class="co">#&gt; Columns: 14</span></span>
-<span><span class="co">#&gt; $ doc_id    &lt;chr&gt; "2017-Trump", "2025-Trump", "2021-Biden.txt"</span></span>
-<span><span class="co">#&gt; $ text      &lt;chr&gt; "Chief Just…", "Chief Just…", "Chief Just…"</span></span>
-<span><span class="co">#&gt; $ Year      &lt;int&gt; 2017, 2021, 2025</span></span>
-<span><span class="co">#&gt; $ President &lt;chr&gt; "Trump", "Biden", "Trump"</span></span>
-<span><span class="co">#&gt; $ FirstName &lt;chr&gt; "Donald J.", "Joseph R.", "Donald J."</span></span>
-<span><span class="co">#&gt; $ Party     &lt;fct&gt; Republican, Democratic, Republican</span></span>
-<span><span class="co">#&gt; $ id        &lt;chr&gt; "1", "2", "3"</span></span>
-<span><span class="co">#&gt; $ summary   &lt;chr&gt; "This document is a speech delivered by a U.S. President dur…</span></span>
-<span><span class="co">#&gt; $ topic1    &lt;dbl&gt; 1, 1, 1</span></span>
-<span><span class="co">#&gt; $ topic2    &lt;dbl&gt; 2, 2, 2</span></span>
-<span><span class="co">#&gt; $ topic3    &lt;dbl&gt; 3, 3, 3</span></span>
-<span><span class="co">#&gt; $ score1    &lt;dbl&gt; 0.6, 0.2, 0.2</span></span>
-<span><span class="co">#&gt; $ score2    &lt;dbl&gt; 0.1, 0.3, 0.2</span></span>
-<span><span class="co">#&gt; $ score3    &lt;dbl&gt; 0.3, 0.5, 0.6</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="using-ai_score-for-scoring-documents">Using <code>ai_score()</code> for scoring documents<a class="anchor" aria-label="anchor" href="#using-ai_score-for-scoring-documents"></a>
-</h3>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">prompt</span> <span class="op">&lt;-</span> <span class="st">"Score the following document on a scale of how much it aligns</span></span>
-<span><span class="st">with the political left. The political left is defined as groups which</span></span>
-<span><span class="st">advocate for social equality, government intervention in the economy,</span></span>
-<span><span class="st">and progressive policies. Use the following metrics:</span></span>
-<span><span class="st">SCORING METRIC:</span></span>
-<span><span class="st">3 : extremely left</span></span>
-<span><span class="st">2 : very left</span></span>
-<span><span class="st">1 : slightly left</span></span>
-<span><span class="st">0 : not at all left"</span></span>
-<span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="reference/ai_score.html">ai_score</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">prompt</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>                  api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Calling chat_fn (gpt-4o):</span></span>
-<span><span class="co">#&gt; ... processing: [1/3]</span></span>
-<span><span class="co">#&gt; ... processing: [2/3]</span></span>
-<span><span class="co">#&gt; ... processing: [3/3]</span></span>
-<span><span class="co">#&gt; Finished.</span></span>
-<span></span>
-<span><span class="co"># score and evidence are created as new docvars in the corpus</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>docnames <span class="op">=</span> <span class="fu">docnames</span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span><span class="op">)</span>, </span>
-<span>      <span class="fu">select</span><span class="op">(</span><span class="fu">docvars</span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span>, <span class="va">score</span>, <span class="va">evidence</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="st">"html"</span>, escape <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/column_spec.html" class="external-link">column_spec</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> </span></code></pre></div>
-<table class="table table table-striped table-hover" style="color: black; margin-left: auto; margin-right: auto;">
-<thead><tr>
-<th style="text-align:left;">
-docnames
-</th>
-<th style="text-align:left;">
-score
-</th>
-<th style="text-align:left;">
-evidence
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-2017-Trump
-</td>
-<td style="text-align:left;">
-0
-</td>
-<td style="text-align:left;">
-The document emphasizes themes of nationalism, protectionism, and a focus on American interests, which are typically associated with right-wing political ideologies. It criticizes the political establishment and globalism, advocating for policies like ‘America First’ and ‘buy American, hire American.’ These positions do not align with the political left, which generally supports international cooperation, social equality, and government intervention in the economy to address social issues. The speech also highlights a strong allegiance to the military and law enforcement, further distancing it from leftist ideologies.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2025-Trump
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-The document emphasizes themes of unity, social justice, and government responsibility, which align with left-leaning values. It highlights the need to address racial justice, climate change, and economic inequality, advocating for collective action and government intervention. The call for unity and healing, while not exclusively leftist, is framed in the context of overcoming systemic issues, which are often championed by the political left. The speech also references historical struggles for equality and justice, further aligning with progressive ideals.
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-2021-Biden.txt
-</td>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:left;">
-The document emphasizes themes of unity, social justice, and government intervention, which align with left-leaning political ideologies. It highlights the need to address racial justice, climate change, and economic inequality, all of which are typically associated with progressive policies. The call for unity and healing, while not exclusively leftist, is framed in the context of overcoming systemic issues and promoting social equality, further supporting a left-leaning perspective.
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="section level3">
-<h3 id="using-ai_validate-to-manually-check-llm-generated-outputs">Using <code>ai_validate()</code> to manually check LLM-generated outputs<a class="anchor" aria-label="anchor" href="#using-ai_validate-to-manually-check-llm-generated-outputs"></a>
-</h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu">mutate</span><span class="op">(</span><span class="fu"><a href="reference/ai_validate.html">ai_validate</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">score</span>, <span class="va">evidence</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co"># validated scores and comments as well as highlighted examples from texts are</span></span>
-<span><span class="co"># created as new docvars in the corpus </span></span></code></pre></div>
-</div>
+<p>To learn more about how to use the package, please refer to the following examples:</p>
+<ul>
+<li><a href="https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/summarizing.html">Summarizing texts with LLMs</a></li>
+<li><a href="https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/salience.html">Salience ratings of topics with LLMs</a></li>
+<li><a href="https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/scoring.html">Scoring texts with LLMs</a></li>
+<li><a href="https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/structuring.html">Structuring LLM responses for text analysis</a></li>
+<li><a href="https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/validating.html">Validating LLM responses</a></li>
+</ul>
 </div>
 </div>
 

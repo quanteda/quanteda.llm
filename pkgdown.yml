@@ -3,7 +3,12 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   getting-started: getting-started.html
-last_built: 2025-07-13T04:31Z
+  pkgdown/examples/salience: pkgdown/examples/salience.html
+  pkgdown/examples/scoring: pkgdown/examples/scoring.html
+  pkgdown/examples/structuring: pkgdown/examples/structuring.html
+  pkgdown/examples/summarizing: pkgdown/examples/summarizing.html
+  pkgdown/examples/validating: pkgdown/examples/validating.html
+last_built: 2025-07-14T00:26Z
 urls:
   reference: https://quanteda.github.io/quanteda.llm/reference
   article: https://quanteda.github.io/quanteda.llm/articles
