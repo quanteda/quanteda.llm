@@ -111,12 +111,16 @@ summarization.</p>
 <span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../../../reference/ai_summary.html">ai_summary</a></span><span class="op">(</span><span class="va">text</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
 <span>                    api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Calling chat_fn (gpt-4o):</span></span>
-<span><span class="co">## ... processing: [1/3]</span></span>
-<span><span class="co">## ... processing: [2/3]</span></span>
-<span><span class="co">## ... processing: [3/3]</span></span>
-<span><span class="co">## Finished.</span></span></code></pre>
+<pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA: 10s | <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  5s | <span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">3</span> documents successfully</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>docnames <span class="op">=</span> <span class="fu"><a href="https://quanteda.io/reference/docnames.html" class="external-link">docnames</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span><span class="op">)</span>, </span>
@@ -174,13 +178,13 @@ for a better future.
 The document is a speech by a political leader, likely Donald Trump,
 marking the beginning of a new presidential term. The speech emphasizes
 a vision of restoring America’s greatness, sovereignty, and prosperity.
-It outlines plans to prioritize American interests, address issues like
-border security, energy independence, and economic revitalization. The
-leader promises to end government corruption, restore trust, and unify
-the nation. The speech also highlights a commitment to national defense,
-law and order, and a return to traditional values. It concludes with a
-call for national unity and ambition, promising a new era of American
-success and leadership.
+It outlines plans to prioritize American interests, address national
+challenges, and implement policies aimed at economic growth, border
+security, and national unity. The leader expresses gratitude for
+electoral support, particularly from minority communities, and pledges
+to reverse previous policies perceived as detrimental. The speech is
+characterized by a strong nationalistic tone, promising a new era of
+American success and global respect.
 </td>
 </tr>
 </tbody>

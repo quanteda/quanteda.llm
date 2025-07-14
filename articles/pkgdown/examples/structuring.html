@@ -136,12 +136,16 @@ LLM-generated data into your text analysis workflows.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../../../reference/ai_text.html">ai_text</a></span><span class="op">(</span><span class="va">text</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>, type_object <span class="op">=</span> <span class="va">policy_scores</span>,</span>
 <span>                 system_prompt <span class="op">=</span> <span class="va">prompt</span>,</span>
 <span>                  api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Calling chat_openai (gpt-4o):</span></span>
-<span><span class="co">## ... processing: [1/3]</span></span>
-<span><span class="co">## ... processing: [2/3]</span></span>
-<span><span class="co">## ... processing: [3/3]</span></span>
-<span><span class="co">## Finished.</span></span></code></pre>
+<pre><code><span><span class="co">## Using `chat_openai()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  9s | <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  5s | <span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">3</span> documents successfully</span></span></code></pre>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># score and evidence are created as new docvars in the corpus</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
@@ -172,14 +176,14 @@ evidence
 </td>
 <td style="text-align:left;">
 The speech emphasizes nationalism, protectionism, and a focus on
-‘America first’ policies, which are not aligned with the political
-left’s advocacy for social equality, government intervention in the
-economy, and progressive policies. The speech criticizes the political
-establishment and emphasizes returning power to the people, but it does
-not propose specific progressive policies or government interventions
-that are typically associated with the political left. Instead, it
-focuses on reducing foreign influence and prioritizing American
-interests, which are more aligned with right-wing populism.
+‘America first’ policies, which are not typically aligned with the
+political left. It criticizes the political establishment and globalism,
+and promotes a vision of national pride and self-reliance. The speech
+does not advocate for social equality, government intervention in the
+economy, or progressive policies, which are key tenets of the political
+left. Instead, it focuses on returning power to the people and
+prioritizing American interests, which aligns more with right-wing
+populism.
 </td>
 </tr>
 <tr>
@@ -191,14 +195,13 @@ interests, which are more aligned with right-wing populism.
 </td>
 <td style="text-align:left;">
 The speech emphasizes themes of unity, democracy, and addressing
-systemic issues such as racial justice, climate change, and economic
-inequality, which align with progressive policies typically associated
-with the political left. The call for government intervention to address
-the pandemic, rebuild the middle class, and secure healthcare for all
-further supports a left-leaning perspective. However, the speech also
-focuses heavily on unity and bipartisanship, which tempers the alignment
-with the political left, as it seeks to appeal to a broader audience
-beyond just left-leaning individuals.
+systemic issues such as racial justice and climate change, which align
+with progressive policies. It also calls for government action to tackle
+the pandemic, economic challenges, and social inequalities, reflecting a
+left-leaning perspective on government intervention in the economy and
+social equality. However, the speech also focuses on unity and
+bipartisanship, which slightly moderates its alignment with the
+political left.
 </td>
 </tr>
 <tr>
@@ -214,11 +217,11 @@ military, which are typically associated with right-wing politics. It
 criticizes government intervention in the economy, such as the Green New
 Deal and electric vehicle mandates, and promotes energy independence
 through drilling, which aligns with conservative economic policies. The
-speech also focuses on traditional values, such as a binary view of
-gender and a colorblind society, which are not aligned with progressive
-policies. Overall, the speech does not advocate for social equality,
-government intervention in the economy, or progressive policies, which
-are key tenets of the political left.
+speech also opposes government censorship and promotes a colorblind,
+merit-based society, which are not aligned with progressive policies.
+Overall, the speech does not advocate for social equality, government
+intervention in the economy, or progressive policies, which are key
+tenets of the political left.
 </td>
 </tr>
 </tbody>
