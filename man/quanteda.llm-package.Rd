@@ -4,15 +4,15 @@
 \name{quanteda.llm-package}
 \alias{quanteda.llm}
 \alias{quanteda.llm-package}
-\title{quanteda.llm: LLM support for quanteda}
+\title{quanteda.llm: LLM support for quanteda corpus objects}
 \description{
-Support for linking LLM analysis with quanteda.
+Provides support for linking quanteda corpus objects to structured, flexible analysis by LLMs.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/quanteda/quanteda.llm}
-  \item Report bugs at \url{https://quanteda.github.io/quanteda.llm/issues}
+  \item Report bugs at \url{https://github.com/quanteda/quanteda.llm/issues}
 }
 
 }

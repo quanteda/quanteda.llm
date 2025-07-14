@@ -1,6 +1,6 @@
 Package: quanteda.llm
 Type: Package
-Title: LLM support for quanteda
+Title: LLM support for quanteda corpus objects
 Version: 0.4.2
 Authors@R: c(
     person(
@@ -14,7 +14,8 @@ Authors@R: c(
       role = c("aut"), comment = c(ORCID = "0000-0002-0797-564X")
     )
   )
-Description: Support for linking LLM analysis with quanteda.
+Description: Provides support for linking quanteda corpus objects to structured,
+  flexible analysis by LLMs.
 License: GPL-3
 Depends:
     R (>= 3.5.0),
@@ -42,4 +43,4 @@ RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 URL: https://github.com/quanteda/quanteda.llm
-BugReports: https://quanteda.github.io/quanteda.llm/issues
+BugReports: https://github.com/quanteda/quanteda.llm/issues
