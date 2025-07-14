@@ -47,8 +47,8 @@ docvar to the input data with all texts not yet validated as \code{NA}.
 \examples{
 \dontrun{
 library(quanteda)
-summ1 <- ai_summarize(data_char_ukimmig2010, chat_fn = chat_ollama, model = "llama3.2")
-summ2 <- ai_summarize(data_corpus_inaugural[1:2], chat_fn = chat_openai,
+summ1 <- ai_summary(data_char_ukimmig2010, chat_fn = chat_ollama, model = "llama3.2")
+summ2 <- ai_summary(data_corpus_inaugural[1:2], chat_fn = chat_openai,
                 api_args = list(temperature = 0, seed = 42))
 validate1 <- ai_validate(data_char_ukimmig2010, llm_output = summ1, verbose = TRUE)
 validate2 <- ai_validate(data_corpus_inaugural[1:2], llm_output = summ2, verbose = TRUE)
