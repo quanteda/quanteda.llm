@@ -20,7 +20,6 @@
 #'
 #' @examples
 #' \dontrun{
-#' library(ellmer)
 #' results <- quanteda::data_corpus_inaugural[1:3] %>%
 #'   ai_text(chat_fn = chat_openai, model = "gpt-4o",
 #'           api_args = list(temperature = 0, seed = 42),
@@ -41,6 +40,8 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     stop("Unsupported data type for ai_text")
 
   args <- rlang::list2(...)
+
+  original_order <- names(.data)
 
   if (is.null(names(.data))) names(.data) <- as.character(seq_along(.data))
 
@@ -91,11 +92,17 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     })
   }
 
-  # df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
-  df_results <- do.call(rbind, Map(cbind, id = names(result_env), as.list(result_env)))
+  # Reconstruct results in original order
+  df_list <- list()
+  for (doc_id in original_order) {
+    if (exists(doc_id, envir = result_env)) {
+      df_list[[doc_id]] <- cbind(id = doc_id, result_env[[doc_id]],
+                                 stringsAsFactors = FALSE)
+    }
+  }
+
+  df_results <- do.call(rbind, df_list)
   rownames(df_results) <- NULL
-
-
 
   # Warn if any response is empty
   empty_docs <- vapply(result_env, function(x) {
