@@ -162,10 +162,11 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
           )
         ),
         shiny::div(class = "footer",
-                   shiny::HTML("AI Validator made with ❤️,
-                         <a href='https://shiny.posit.co/' target='_blank'>Shiny</a>,
-                         and <a href='https://github.com/quanteda/quanteda.llm' target='_blank'>quanteda.llm</a> -
-                         remember, it is important to carefully check the output of LLMs.")
+                   shiny::HTML(paste0(
+                     "AI Validator made with <span style='color: red;'>", "\u2665", "</span>, ",
+                     "<a href='https://shiny.posit.co/' target='_blank'>Shiny</a>, ",
+                     "and <a href='https://github.com/quanteda/quanteda.llm' target='_blank'>quanteda.llm</a>"
+                   ))
         )
       ),
       server = function(input, output, session) {
