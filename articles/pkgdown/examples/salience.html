@@ -114,9 +114,7 @@ indicating how relevant the document is to that topic.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../../../reference/ai_salience.html">ai_salience</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">topics</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
 <span>                     api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  5s | <span style="color: #0000BB;">1</span></span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  3s | <span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  3s | <span style="color: #0000BB;">1</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">3</span></span></span>
 <span><span class="co">## </span></span>
@@ -127,20 +125,17 @@ indicating how relevant the document is to that topic.</p>
 <code class="sourceCode R"><span><span class="co"># topic and score are created as new docvars in the corpus</span></span>
 <span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Rows: 3</span></span>
-<span><span class="co">## Columns: 13</span></span>
-<span><span class="co">## $ doc_id    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2017-Trump"<span style="color: #949494;">, </span>"2021-Biden"<span style="color: #949494;">, </span>"2025-Trump"</span></span>
-<span><span class="co">## $ text      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Chief Just…"<span style="color: #949494;">, </span>"Chief Just…"<span style="color: #949494;">, </span>"Thank you.…"</span></span>
-<span><span class="co">## $ Year      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2017<span style="color: #949494;">, </span>2021<span style="color: #949494;">, </span>2025</span></span>
-<span><span class="co">## $ President <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Trump"<span style="color: #949494;">, </span>"Biden"<span style="color: #949494;">, </span>"Trump"</span></span>
-<span><span class="co">## $ FirstName <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Donald J."<span style="color: #949494;">, </span>"Joseph R."<span style="color: #949494;">, </span>"Donald J."</span></span>
-<span><span class="co">## $ Party     <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> Republican<span style="color: #949494;">, </span>Democratic<span style="color: #949494;">, </span>Republican</span></span>
-<span><span class="co">## $ id        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1"<span style="color: #949494;">, </span>"2"<span style="color: #949494;">, </span>"3"</span></span>
-<span><span class="co">## $ topic1    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>1</span></span>
-<span><span class="co">## $ topic2    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>2</span></span>
-<span><span class="co">## $ topic3    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 3<span style="color: #949494;">, </span>3<span style="color: #949494;">, </span>3</span></span>
-<span><span class="co">## $ score1    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.6<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.5</span></span>
-<span><span class="co">## $ score2    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.3</span></span>
-<span><span class="co">## $ score3    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3<span style="color: #949494;">, </span>0.6<span style="color: #949494;">, </span>0.2</span></span></code></pre>
+<span><span class="co">## Columns: 10</span></span>
+<span><span class="co">## $ doc_id               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2017-Trump"<span style="color: #949494;">, </span>"2021-Biden"<span style="color: #949494;">, </span>"2025-Trump"</span></span>
+<span><span class="co">## $ text                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Chief Just…"<span style="color: #949494;">, </span>"Chief Just…"<span style="color: #949494;">, </span>"Thank you.…"</span></span>
+<span><span class="co">## $ Year                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2017<span style="color: #949494;">, </span>2021<span style="color: #949494;">, </span>2025</span></span>
+<span><span class="co">## $ President            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Trump"<span style="color: #949494;">, </span>"Biden"<span style="color: #949494;">, </span>"Trump"</span></span>
+<span><span class="co">## $ FirstName            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Donald J."<span style="color: #949494;">, </span>"Joseph R."<span style="color: #949494;">, </span>"Donald J."</span></span>
+<span><span class="co">## $ Party                <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> Republican<span style="color: #949494;">, </span>Democratic<span style="color: #949494;">, </span>Republican</span></span>
+<span><span class="co">## $ id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1"<span style="color: #949494;">, </span>"2"<span style="color: #949494;">, </span>"3"</span></span>
+<span><span class="co">## $ salience_economy     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.6<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.5</span></span>
+<span><span class="co">## $ salience_environment <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.2</span></span>
+<span><span class="co">## $ salience_healthcare  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3<span style="color: #949494;">, </span>0.6<span style="color: #949494;">, </span>0.3</span></span></code></pre>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
