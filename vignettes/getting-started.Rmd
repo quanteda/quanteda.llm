@@ -38,9 +38,7 @@ If you need more flexibility in how the LLM generates its output, you can use th
 
 ## Example uses
 
-This vignette provides a brief overview of how to use the `quanteda.llm` package for analyzing texts with LLMs. The following examples demonstrate how to summarize documents, classify topics, and score documents using LLMs. At the end, we will also show how to validate LLM responses manually and customize the structure of LLM responses for more advanced text analysis tasks.
-
-For more detailed examples including **code snippets**, please refer to the section [Examples]().
+This vignette provides a brief overview of how to use the `quanteda.llm` package for analyzing texts with LLMs by briefly describing the main functions and their purposes. For more detailed examples including **code snippets**, please refer to the section [Examples](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/summarizing.html).
 
 ### Summarizing documents
 
