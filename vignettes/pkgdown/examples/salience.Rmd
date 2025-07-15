@@ -14,9 +14,8 @@ The `ai_salience()` function allows you to classify documents based on their rel
 ```{r getting-started}
 library(quanteda)
 library(quanteda.llm)
-library(quanteda.tidy)
 
-data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+data_corpus_inaugural <- data_corpus_inaugural[57:60]
 ```
 
 ### Using `ai_salience()` for salience rating of topics
@@ -24,10 +23,20 @@ data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
 ```{r ai_salience}
 # define the topics for salience classification
 topics <- c("economy", "environment", "healthcare")
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_salience(text, topics, chat_fn = chat_openai, model = "gpt-4o",
-                     api_args = list(temperature = 0, seed = 42)))
+result <- data_corpus_inaugural %>%
+  ai_salience(topics, chat_fn = chat_openai, model = "gpt-4o",
+              api_args = list(temperature = 0, seed = 42))
+```
 
+```{r display_results1, eval = FALSE}
+result
+```
+
+```{r display_results2, echo = FALSE}
 # topic and score are created as new docvars in the corpus
-glimpse(data_corpus_inaugural)
+library(kableExtra)
+result %>%
+  kable("html", escape = FALSE) %>%
+  kable_styling(bootstrap_options = c("striped", "hover")) %>%
+  column_spec(3) 
 ```

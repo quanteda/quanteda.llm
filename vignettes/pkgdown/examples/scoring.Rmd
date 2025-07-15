@@ -14,7 +14,6 @@ The `ai_score()` function allows you to score documents based on a predefined sc
 ```{r getting-started}
 library(quanteda)
 library(quanteda.llm)
-library(quanteda.tidy)
 
 data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
 ```
@@ -33,14 +32,14 @@ SCORING METRIC:
 1 : slightly left 
 0 : not at all left"
 
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_score(text, prompt, chat_fn = chat_openai, model = "gpt-4o",
-                  api_args = list(temperature = 0, seed = 42)))
+result <- ai_score(data_corpus_inaugural, prompt, chat_fn = chat_openai, 
+                   model = "gpt-4o",
+                   api_args = list(temperature = 0, seed = 42))
+
 
 # score and evidence are created as new docvars in the corpus
 library(kableExtra)
-cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
-      select(docvars(data_corpus_inaugural), score, evidence)) %>%
+result %>%
   kable("html", escape = FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   column_spec(3) 

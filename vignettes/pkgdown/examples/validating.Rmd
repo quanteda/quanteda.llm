@@ -14,16 +14,35 @@ The `ai_validate()` function allows users to manually check and validate the res
 ```{r getting-started}
 library(quanteda)
 library(quanteda.llm)
-library(quanteda.tidy)
 
 data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
 ```
 
 ### Using `ai_validate()` to manually check LLM-generated outputs
 
-```{r ai_validate, eval = FALSE}
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_validate(text, score, evidence))
-# validated scores and comments as well as highlighted examples from texts are
-# created as new docvars in the corpus 
+```{r ai_score, eval = TRUE}
+prompt <- "Score the following document on a scale of how much it aligns 
+with the political left. The political left is defined as groups 
+which advocate for social equality, government intervention in the 
+economy, and progressive policies. Use the following metrics: 
+
+SCORING METRIC: 
+3 : extremely left 
+2 : very left 
+1 : slightly left 
+0 : not at all left"
+
+result <- ai_score(data_corpus_inaugural, prompt, chat_fn = chat_openai, 
+                   model = "gpt-4o",
+                   api_args = list(temperature = 0, seed = 42))
 ```
+
+Now validate the scores and return the result:
+```{r validate, eval = FALSE}
+ai_validate(data_corpus_inaugural, result)
+```
+
+```{r, echo=FALSE, fig.cap="AI Validate Screenshot", out.width="100%"}
+knitr::include_graphics("images/ai_validate_screenshot.png")
+```
+

@@ -43,4 +43,4 @@ navbar:
     github:
       icon: "fab fa-github"
       href: https://github.com/quanteda/quanteda.llm
-
+      aria-label: "View on GitHub"
