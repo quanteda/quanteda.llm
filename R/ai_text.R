@@ -42,6 +42,8 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
 
   args <- rlang::list2(...)
 
+  original_order <- names(.data)
+
   if (is.null(names(.data))) names(.data) <- as.character(seq_along(.data))
 
   # Set up system prompt
@@ -127,12 +129,16 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     })
   }
 
-  if (verbose && to_process > 0) {
-    cli::cli_progress_done()
+  # Reconstruct results in original order
+  df_list <- list()
+  for (doc_id in original_order) {
+    if (exists(doc_id, envir = result_env)) {
+      df_list[[doc_id]] <- cbind(id = doc_id, result_env[[doc_id]],
+                                 stringsAsFactors = FALSE)
+    }
   }
 
-  # Process results
-  df_results <- do.call(rbind, Map(cbind, id = names(result_env), as.list(result_env)))
+  df_results <- do.call(rbind, df_list)
   rownames(df_results) <- NULL
 
   # Check for empty responses

@@ -42,7 +42,7 @@ SCORING METRIC:
 1 : slightly left
 0 : not at all left"
 # compute scores for documents in the inaugural corpus
-scores <- ai_score(data_corpus_inaugural[1:3], prompt,
+scores <- ai_score(data_corpus_inaugural[57:59], prompt,
                    chat_fn = chat_openai, model = "gpt-4o",
                    api_args = list(temperature = 0, seed = 42))
 }
