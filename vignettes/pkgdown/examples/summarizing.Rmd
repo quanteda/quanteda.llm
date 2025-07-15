@@ -14,22 +14,18 @@ The `ai_summary()` function allows you to summarize documents using an LLM. It g
 ```{r getting-started}
 library(quanteda)
 library(quanteda.llm)
-library(quanteda.tidy)
 
-data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+data_corpus_inaugural <- data_corpus_inaugural[57:60]
 ```
 
 ### Using `ai_summary()` for summarization of documents
 
 ```{r ai_summary}
-# creates a new docvar "summary"
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_summary(text, chat_fn = chat_openai, model = "gpt-4o",
-                    api_args = list(temperature = 0, seed = 42)))
+result <- ai_summary(data_corpus_inaugural, chat_fn = chat_openai, model = "gpt-4o",
+                    api_args = list(temperature = 0, seed = 42))
 
 library(kableExtra)
-cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
-      summary = data_corpus_inaugural$summary) %>%
+  result %>%
   kable("html", escape = FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   column_spec(2)

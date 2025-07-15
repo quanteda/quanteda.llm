@@ -16,15 +16,13 @@ If you need more flexibility in how the LLM generates its output, you can use th
 ```{r getting-started}
 library(quanteda)
 library(quanteda.llm)
-library(quanteda.tidy)
 
-data_corpus_inaugural <- tail(data_corpus_inaugural, 3)
+data_corpus_inaugural <- data_corpus_inaugural[57:60]
 ```
 
 ### Using `ai_text()` for scoring documents
 
 ```{r ai_text}
-
 prompt <- "Score the following document on a scale of how much it aligns
 with the political left. The political left is defined as groups which
 advocate for social equality, government intervention in the economy,
@@ -38,17 +36,18 @@ SCORING METRIC:
 # define the structure of the response
 policy_scores <- type_object(
   score = type_integer(),
-  evidence = type_string())
+  evidence = type_string()
+)
 
-data_corpus_inaugural <- data_corpus_inaugural %>%
-  mutate(ai_text(text, chat_fn = chat_openai, model = "gpt-4o", type_object = policy_scores,
-                 system_prompt = prompt,
-                  api_args = list(temperature = 0, seed = 42)))
+result <- ai_text(data_corpus_inaugural, chat_fn = chat_openai, model = "gpt-4o", 
+                  type_object = policy_scores,
+                  system_prompt = prompt,
+                  api_args = list(temperature = 0, seed = 42)) 
+
 
 # score and evidence are created as new docvars in the corpus
 library(kableExtra)
-cbind(data.frame(docnames = docnames(data_corpus_inaugural)), 
-      select(docvars(data_corpus_inaugural), score, evidence)) %>%
+  result %>%
   kable("html", escape = FALSE) %>%
   kable_styling(bootstrap_options = c("striped", "hover")) %>%
   column_spec(3) 
