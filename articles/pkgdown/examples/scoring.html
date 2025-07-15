@@ -48,7 +48,7 @@
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm" aria-label="View on GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
 
@@ -92,22 +92,15 @@ explanation of the reasoning behind the score.</p>
 <pre><code><span><span class="co">## Parallel computing: disabled</span></span></code></pre>
 <pre><code><span><span class="co">## See https://quanteda.io for tutorials and examples.</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/quanteda/quanteda.llm" class="external-link">quanteda.llm</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.github.io/quanteda.llm">quanteda.llm</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: ellmer</span></span></code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">quanteda.tidy</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'quanteda.tidy'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:stats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     filter</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="using-ai_score-for-scoring-documents">Using <code>ai_score()</code> for scoring documents<a class="anchor" aria-label="anchor" href="#using-ai_score-for-scoring-documents"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prompt</span> <span class="op">&lt;-</span> <span class="st">"Score the following document on a scale of how much it aligns </span></span>
 <span><span class="st">with the political left. The political left is defined as groups </span></span>
 <span><span class="st">which advocate for social equality, government intervention in the </span></span>
@@ -119,31 +112,30 @@ explanation of the reasoning behind the score.</p>
 <span><span class="st">1 : slightly left </span></span>
 <span><span class="st">0 : not at all left"</span></span>
 <span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../../../reference/ai_score.html">ai_score</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">prompt</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>                  api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../../reference/ai_score.html">ai_score</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, <span class="va">prompt</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, </span>
+<span>                   model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
+<span>                   api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  7s | <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  7s | <span style="color: #0000BB;">2017-Trump</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  3s | <span style="color: #0000BB;">2</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  3s | <span style="color: #0000BB;">2021-Biden</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">3</span> documents successfully</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># score and evidence are created as new docvars in the corpus</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>docnames <span class="op">=</span> <span class="fu"><a href="https://quanteda.io/reference/docnames.html" class="external-link">docnames</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span><span class="op">)</span>, </span>
-<span>      <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="fu"><a href="https://quanteda.io/reference/docvars.html" class="external-link">docvars</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span>, <span class="va">score</span>, <span class="va">evidence</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="st">"html"</span>, escape <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html" class="external-link">kable_styling</a></span><span class="op">(</span>bootstrap_options <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"striped"</span>, <span class="st">"hover"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/column_spec.html" class="external-link">column_spec</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> </span></code></pre></div>
 <table class="table table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
-docnames
+id
 </th>
 <th style="text-align:left;">
 score
@@ -161,15 +153,16 @@ evidence
 0
 </td>
 <td style="text-align:left;">
-The document is a speech that emphasizes nationalism, protectionism, and
-a focus on American interests, which are not typically aligned with the
+The document emphasizes themes of nationalism, protectionism, and a
+focus on American interests, which are not typically aligned with the
 political left. It criticizes the political establishment and globalism,
 advocating for policies like ‘America First,’ which prioritize national
-over international concerns. The speech also highlights themes of
-patriotism and military strength, which are more commonly associated
-with conservative or right-leaning ideologies. There is no significant
-advocacy for social equality, government intervention in the economy, or
-progressive policies, which are characteristic of the political left.
+over international concerns. The speech also highlights reducing
+government intervention in favor of empowering citizens directly, which
+contrasts with the left’s preference for government-led solutions to
+social and economic issues. Overall, the document does not align with
+the political left’s advocacy for social equality and progressive
+policies.
 </td>
 </tr>
 <tr>
@@ -181,12 +174,13 @@ progressive policies, which are characteristic of the political left.
 </td>
 <td style="text-align:left;">
 The document emphasizes themes of unity, social justice, and government
-intervention, which align with left-leaning political values. It
-highlights the need to address racial justice, climate change, and
-economic inequality, advocating for policies that promote social
-equality and government action. The call for unity and healing, while
-not exclusively leftist, is framed in the context of overcoming systemic
-issues, which are often associated with progressive policies.
+intervention in addressing societal issues, which align with
+left-leaning political values. It highlights the need to confront racial
+injustice, climate change, and economic inequality, advocating for
+policies that promote social equality and collective action. The call
+for unity and healing, while not exclusively leftist, is framed in the
+context of addressing systemic issues and promoting progressive change,
+which are characteristic of left-leaning ideologies.
 </td>
 </tr>
 <tr>
@@ -197,14 +191,16 @@ issues, which are often associated with progressive policies.
 0
 </td>
 <td style="text-align:left;">
-The document is a speech that emphasizes national sovereignty, border
-security, and economic independence, which are typically associated with
-right-wing political ideologies. It criticizes government intervention
-in areas like education and public health, and promotes a strong
-military and energy independence through fossil fuels, which contrasts
-with progressive policies. The speech also includes nationalist rhetoric
-and a focus on American exceptionalism, further aligning it with
-right-wing rather than left-wing political views.
+The document is a speech that emphasizes nationalism, sovereignty, and a
+strong military, which are typically associated with right-wing
+ideologies. It criticizes government intervention in the economy, such
+as the Green New Deal and electric vehicle mandates, and promotes energy
+independence through drilling, which aligns with conservative economic
+policies. The speech also focuses on border security and immigration
+control, advocating for policies like the Remain in Mexico policy and
+the use of military force at the border. These positions do not align
+with the political left’s advocacy for social equality, government
+intervention in the economy, and progressive policies.
 </td>
 </tr>
 </tbody>

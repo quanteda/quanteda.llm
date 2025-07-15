@@ -48,7 +48,7 @@
 </li>
       </ul>
 <ul class="navbar-nav">
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm"><span class="fa fab fa-github"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/quanteda/quanteda.llm" aria-label="View on GitHub"><span class="fa fab fa-github"></span></a></li>
       </ul>
 </div>
 
@@ -58,7 +58,7 @@
 
 
 
-
+<script src="salience_files/kePrint-0.0.1/kePrint.js"></script><link href="salience_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
@@ -92,50 +92,106 @@ indicating how relevant the document is to that topic.</p>
 <pre><code><span><span class="co">## Parallel computing: disabled</span></span></code></pre>
 <pre><code><span><span class="co">## See https://quanteda.io for tutorials and examples.</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/quanteda/quanteda.llm" class="external-link">quanteda.llm</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.github.io/quanteda.llm">quanteda.llm</a></span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Loading required package: ellmer</span></span></code></pre>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">quanteda.tidy</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'quanteda.tidy'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:stats':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     filter</span></span></code></pre>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span><span class="op">[</span><span class="fl">57</span><span class="op">:</span><span class="fl">60</span><span class="op">]</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="using-ai_salience-for-salience-rating-of-topics">Using <code>ai_salience()</code> for salience rating of topics<a class="anchor" aria-label="anchor" href="#using-ai_salience-for-salience-rating-of-topics"></a>
 </h3>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># define the topics for salience classification</span></span>
 <span><span class="va">topics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"economy"</span>, <span class="st">"environment"</span>, <span class="st">"healthcare"</span><span class="op">)</span></span>
-<span><span class="va">data_corpus_inaugural</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="../../../reference/ai_salience.html">ai_salience</a></span><span class="op">(</span><span class="va">text</span>, <span class="va">topics</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
-<span>                     api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="va">data_corpus_inaugural</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="../../../reference/ai_salience.html">ai_salience</a></span><span class="op">(</span><span class="va">topics</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
+<span>              api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  3s | <span style="color: #0000BB;">1</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA:  8s | <span style="color: #0000BB;">2013-Obama</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">3</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span> 3/4 |  75% | ETA:  2s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 4/4 | 100% | ETA:  0s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">3</span> documents successfully</span></span></code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># topic and score are created as new docvars in the corpus</span></span>
-<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Rows: 3</span></span>
-<span><span class="co">## Columns: 10</span></span>
-<span><span class="co">## $ doc_id               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "2017-Trump"<span style="color: #949494;">, </span>"2021-Biden"<span style="color: #949494;">, </span>"2025-Trump"</span></span>
-<span><span class="co">## $ text                 <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Chief Just…"<span style="color: #949494;">, </span>"Chief Just…"<span style="color: #949494;">, </span>"Thank you.…"</span></span>
-<span><span class="co">## $ Year                 <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 2017<span style="color: #949494;">, </span>2021<span style="color: #949494;">, </span>2025</span></span>
-<span><span class="co">## $ President            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Trump"<span style="color: #949494;">, </span>"Biden"<span style="color: #949494;">, </span>"Trump"</span></span>
-<span><span class="co">## $ FirstName            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "Donald J."<span style="color: #949494;">, </span>"Joseph R."<span style="color: #949494;">, </span>"Donald J."</span></span>
-<span><span class="co">## $ Party                <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> Republican<span style="color: #949494;">, </span>Democratic<span style="color: #949494;">, </span>Republican</span></span>
-<span><span class="co">## $ id                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> "1"<span style="color: #949494;">, </span>"2"<span style="color: #949494;">, </span>"3"</span></span>
-<span><span class="co">## $ salience_economy     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.6<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.5</span></span>
-<span><span class="co">## $ salience_environment <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1<span style="color: #949494;">, </span>0.2<span style="color: #949494;">, </span>0.2</span></span>
-<span><span class="co">## $ salience_healthcare  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.3<span style="color: #949494;">, </span>0.6<span style="color: #949494;">, </span>0.3</span></span></code></pre>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">4</span> documents successfully</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">result</span></span></code></pre></div>
+<table class="table table table-striped table-hover" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+id
+</th>
+<th style="text-align:right;">
+salience_economy
+</th>
+<th style="text-align:right;">
+salience_environment
+</th>
+<th style="text-align:right;">
+salience_healthcare
+</th>
+</tr></thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+2013-Obama
+</td>
+<td style="text-align:right;">
+0.4
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2017-Trump
+</td>
+<td style="text-align:right;">
+0.6
+</td>
+<td style="text-align:right;">
+0.1
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2021-Biden
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+<td style="text-align:right;">
+0.6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2025-Trump
+</td>
+<td style="text-align:right;">
+0.5
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+<td style="text-align:right;">
+0.2
+</td>
+</tr>
+</tbody>
+</table>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
