@@ -8,7 +8,7 @@ articles:
   pkgdown/examples/structuring: pkgdown/examples/structuring.html
   pkgdown/examples/summarizing: pkgdown/examples/summarizing.html
   pkgdown/examples/validating: pkgdown/examples/validating.html
-last_built: 2025-07-15T21:40Z
+last_built: 2025-07-15T21:44Z
 urls:
   reference: https://quanteda.github.io/quanteda.llm/reference
   article: https://quanteda.github.io/quanteda.llm/articles

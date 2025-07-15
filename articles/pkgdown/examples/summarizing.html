@@ -103,11 +103,11 @@ summarization.</p>
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../../reference/ai_summary.html">ai_summary</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
 <span>                    api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA: 20s | <span style="color: #0000BB;">2013-Obama</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA: 11s | <span style="color: #0000BB;">2013-Obama</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span> 2/4 |  50% | ETA: 14s | <span style="color: #0000BB;">2017-Trump</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span> 2/4 |  50% | ETA:  9s | <span style="color: #0000BB;">2017-Trump</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span> 3/4 |  75% | ETA:  6s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span> 3/4 |  75% | ETA:  4s | <span style="color: #0000BB;">2021-Biden</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 4/4 | 100% | ETA:  0s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
@@ -139,12 +139,12 @@ The document is a speech delivered during a presidential inauguration,
 emphasizing the enduring strength of the U.S. Constitution and the
 democratic ideals of equality, liberty, and the pursuit of happiness. It
 highlights the need for collective action to address modern challenges,
-such as economic recovery, climate change, and social justice, while
-maintaining individual freedoms. The speech calls for unity and action
-to ensure prosperity and security for all Americans, stressing the
-importance of adapting to change while staying true to foundational
-principles. It concludes with a call to citizens to actively participate
-in shaping the nation’s future.
+such as economic recovery, climate change, and social justice. The
+speech calls for unity and progress, urging Americans to work together
+to ensure prosperity and security for all citizens, while maintaining
+the nation’s founding principles. It stresses the importance of adapting
+to change and acting with purpose to uphold the values of freedom and
+equality.
 </td>
 </tr>
 <tr>
@@ -154,14 +154,15 @@ in shaping the nation’s future.
 <td style="text-align:left;">
 The document is a speech delivered by a U.S. President during an
 inauguration ceremony. The speech emphasizes a commitment to returning
-power to the American people, addressing the challenges faced by the
-nation, and prioritizing American interests. It criticizes the political
-establishment for benefiting at the expense of ordinary citizens and
-promises to focus on rebuilding the country’s infrastructure, economy,
-and military. The speech also highlights themes of unity, patriotism,
-and a new era of action, with a focus on “America first” policies. The
-President pledges to fight for American workers and families, and to
-restore national pride and prosperity.
+power to the American people, addressing economic and social challenges,
+and prioritizing American interests in policy decisions. It criticizes
+past administrations for benefiting a small group in Washington at the
+expense of the general populace and promises a new era of governance
+focused on “America first.” The speech calls for unity, patriotism, and
+action, promising to rebuild the nation’s infrastructure, economy, and
+global standing while eradicating threats like terrorism. It concludes
+with a pledge to make America strong, wealthy, proud, safe, and great
+again.
 </td>
 </tr>
 <tr>
@@ -171,12 +172,13 @@ restore national pride and prosperity.
 <td style="text-align:left;">
 The document is a speech emphasizing the importance of democracy, unity,
 and the peaceful transfer of power in the United States. It acknowledges
-the challenges faced by the nation, including a pandemic, racial
-injustice, and political extremism, and calls for unity to overcome
-these issues. The speaker highlights the resilience of American
-democracy and the need for collective action to build a better future.
-The speech also pays tribute to past leaders and the sacrifices made by
-Americans, urging the nation to come together to heal and progress.
+the challenges faced by the nation, including the COVID-19 pandemic,
+racial injustice, political extremism, and climate change. The speaker
+calls for unity and collective action to overcome these issues,
+highlighting the resilience of the American people and the need to
+uphold truth and justice. The speech also pays tribute to past leaders
+and the sacrifices made by Americans, urging the nation to work together
+to build a better future.
 </td>
 </tr>
 <tr>
@@ -184,17 +186,16 @@ Americans, urging the nation to come together to heal and progress.
 2025-Trump
 </td>
 <td style="text-align:left;">
-The document is a speech by a political leader, likely a U.S. President,
-addressing the nation on the occasion of their inauguration or
-re-election. The speech emphasizes a vision of national renewal and
-strength, promising to prioritize American interests, restore national
-pride, and address various domestic and international challenges. The
-leader outlines plans to enhance border security, reduce inflation,
-boost energy production, and reform trade policies. The speech also
-highlights a commitment to restoring free speech, law and order, and
-military strength, while promoting national unity and ambition. The
-leader expresses gratitude for electoral support and pledges to work
-towards a prosperous and unified America.
+The document is a speech by a political leader, likely Donald Trump,
+marking the beginning of a new presidential term. The speech emphasizes
+a vision of restoring America’s greatness, sovereignty, and prosperity.
+It outlines plans to prioritize American interests, address national
+challenges, and implement policies aimed at economic growth, border
+security, and national unity. The leader expresses gratitude for
+electoral support, particularly from minority communities, and pledges
+to reverse previous policies perceived as detrimental. The speech is
+characterized by a strong nationalistic tone, promising a new era of
+American exceptionalism and global respect.
 </td>
 </tr>
 </tbody>
