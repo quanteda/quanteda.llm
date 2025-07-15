@@ -44,6 +44,7 @@ few-shot learning examples for better performance.
 }
 \examples{
 \dontrun{
+library(quanteda)
 results <- quanteda::data_corpus_inaugural[1:3] \%>\%
   ai_text(chat_fn = chat_openai, model = "gpt-4o",
           api_args = list(temperature = 0, seed = 42),

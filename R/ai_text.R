@@ -20,6 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
+#' library(quanteda)
 #' results <- quanteda::data_corpus_inaugural[1:3] %>%
 #'   ai_text(chat_fn = chat_openai, model = "gpt-4o",
 #'           api_args = list(temperature = 0, seed = 42),
@@ -42,6 +43,8 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
 
   args <- rlang::list2(...)
 
+  if (is.null(names(.data)))
+    names(.data) <- paste0("text", as.character(seq_along(.data)))
   original_order <- names(.data)
 
   if (is.null(names(.data))) names(.data) <- as.character(seq_along(.data))
@@ -84,7 +87,7 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     # Create progress bar
     cli::cli_progress_bar(
       format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} | {cli::pb_percent} | ETA: {cli::pb_eta} | {.file {current_doc}}",
-      total = total_docs,
+      total = to_process,
       clear = FALSE
     )
 
@@ -165,49 +168,3 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
 
   return(df_results)
 }
-
-# if (verbose) cat("\nCalling ", deparse(substitute(chat_fn)), " (", model, "):\n",
-#                    sep = "")
-#
-#   for (doc_id in names(.data)) {
-#     if (exists(doc_id, envir = result_env)) next  # skip if already processed
-#
-#     i <- which(names(.data) == doc_id)
-#     if (verbose) cat("... processing: ", "[", i, "/", length(.data), "]\n", sep = "")
-#
-#     if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
-#
-#     tryCatch({
-#       data <- chat$chat_structured(.data[i], type = type_object)
-#       flat <- unlist(data, recursive = TRUE, use.names = TRUE)
-#       result_env[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
-#     }, error = function(e) {
-#       warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
-#     })
-#   }
-#
-#   # df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
-#   df_results <- do.call(rbind, Map(cbind, id = names(result_env), as.list(result_env)))
-#   rownames(df_results) <- NULL
-#
-#
-#
-#   # Warn if any response is empty
-#   empty_docs <- vapply(result_env, function(x) {
-#     all(vapply(x, function(col) all(nzchar(col) == FALSE), logical(1)))
-#   }, logical(1))
-#
-#   if (any(empty_docs)) {
-#     warning(
-#       "One or more documents returned empty responses. ",
-#       "This may be due to:\n",
-#       "- A missing or incorrectly set API key\n",
-#       "- The input exceeding the model's sequence length limit\n",
-#       "Please check both your API setup and whether your input text is too long."
-#     )
-#   }
-#
-#   if (verbose) cat("Finished.\n")
-#
-#   return(df_results)
-# }
