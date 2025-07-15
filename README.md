@@ -23,9 +23,7 @@ functions for managing, manipulating, and describing corpora as well as
 linking their document variables and metadata to these documents.
 **quanteda.llm** makes it convenient to link these to LLMs for analysing
 or classifying these texts, creating new variables from what is created
-by the LLMs. Using a tidy approach and linking to the new
-**quanteda.tidy** package, we enable convenient operations using common
-Tidyverse functions for manipulating LLM-created objects and variables.
+by the LLMs.
 
 # Included functions
 
@@ -118,7 +116,7 @@ following examples:
 
 - [Summarizing texts with
   LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/summarizing.html)
-- [Salience ratings of topics with
+- [Salience ratings of topics in texts with
   LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/salience.html)
 - [Scoring texts with
   LLMs](https://quanteda.github.io/quanteda.llm/articles/pkgdown/examples/scoring.html)

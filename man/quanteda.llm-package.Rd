@@ -11,6 +11,7 @@ Provides support for linking quanteda corpus objects to structured, flexible ana
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://quanteda.github.io/quanteda.llm}
   \item \url{https://github.com/quanteda/quanteda.llm}
   \item Report bugs at \url{https://github.com/quanteda/quanteda.llm/issues}
 }

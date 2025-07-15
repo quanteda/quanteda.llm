@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 [![pkgdown](https://img.shields.io/badge/pkgdown-site-blue)](https://quanteda.github.io/quanteda.llm/)
 <!-- badges: end -->
 
-The **quanteda.llm** package makes it easy to use LLMs with [quanteda](https://quanteda.io/) corpora (or character vectors and data frames), to enable classification, summarisation, scoring, and analysis of documents and text. **quanteda** provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents.  **quanteda.llm** makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs. Using a tidy approach and linking to the new **quanteda.tidy** package, we enable convenient operations using common Tidyverse functions for manipulating LLM-created objects and variables.
+The **quanteda.llm** package makes it easy to use LLMs with [quanteda](https://quanteda.io/) corpora (or character vectors and data frames), to enable classification, summarisation, scoring, and analysis of documents and text. **quanteda** provides a host of convenient functions for managing, manipulating, and describing corpora as well as linking their document variables and metadata to these documents.  **quanteda.llm** makes it convenient to link these to LLMs for analysing or classifying these texts, creating new variables from what is created by the LLMs.
 
 
 
