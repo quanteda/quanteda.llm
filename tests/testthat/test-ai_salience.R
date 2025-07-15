@@ -1,4 +1,4 @@
-make_mock_chat_fn <- function(return_scores = c("0.95", "0.8")) {
+make_mock_chat_fn <- function(return_scores = c(0.95, 0.8)) {
   i <- 0
   function(...) {
     structure(list(
@@ -12,13 +12,13 @@ make_mock_chat_fn <- function(return_scores = c("0.95", "0.8")) {
 }
 
 test_that("ai_salience returns expected output for one document", {
-  chat_fn <- make_mock_chat_fn(c("0.95"))
+  chat_fn <- make_mock_chat_fn(c(0.95))
   result <- ai_salience("Test document", topics = c("TopicA"), chat_fn = chat_fn, verbose = FALSE)
 
   expect_s3_class(result, "data.frame")
-  expect_true("score" %in% colnames(result))
-  expect_type(result$score, "character")
-  expect_equal(result$score, "0.95")
+  expect_true("salience_TopicA" %in% colnames(result))
+  expect_true(is.numeric(result$salience_TopicA))
+  expect_equal(result$salience_TopicA, 0.95)
 })
 
 test_that("ai_salience works with multiple documents", {
@@ -27,8 +27,8 @@ test_that("ai_salience works with multiple documents", {
   result <- ai_salience(docs, topics = c("TopicA"), chat_fn = chat_fn, verbose = FALSE)
 
   expect_s3_class(result, "data.frame")
-  expect_true(all(c("score", "topic") %in% colnames(result)))
+  expect_true(all(c("id", "salience_TopicA") %in% colnames(result)))
   expect_equal(nrow(result), length(docs))
-  expect_type(result$score, "character")
-  expect_equal(result$score, c("0.95", "0.8"))
+  expect_type(result$salience_TopicA, "double")
+  expect_equal(result$salience_TopicA, c(0.95, 0.8))
 })

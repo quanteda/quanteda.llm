@@ -33,13 +33,32 @@
 ai_validate <- function(text, llm_output, llm_evidence = NULL,
                         result_env = new.env(), ..., verbose = TRUE, launch_app = TRUE) {
 
-  if (!is.character(text)) stop("`text` must be a character vector.")
-
-  wrap_text <- function(text, width = 80) {
-    sapply(text, function(x) paste(strwrap(x, width = width), collapse = "\n"))
+  if (!is.character(text)) {
+    stop("`text` must be a character vector.")
   }
 
-  text <- wrap_text(text, width = 80)
+  # if (!is.data.frame(llm_output)) {
+  #   stop("`llm_output` must be a data frame")
+  # }
+
+  # Get the names from the text vector
+  text_names <- names(text)
+  if (is.null(text_names)) {
+    text_names <- as.character(seq_along(text))
+  }
+
+  # Match the order of llm_output to text
+  if ("id" %in% names(llm_output)) {
+    # Reorder llm_output to match text order
+    llm_output <- llm_output[match(text_names, llm_output$id), ]
+
+    # Check for missing matches
+    if (any(is.na(llm_output$id))) {
+      stop("Some text names don't match with llm_output ids")
+    }
+  } else {
+    stop("llm_output must have an 'id' column")
+  }
 
   if (!exists("comments", envir = result_env)) {
     result_env$comments <- rep("N/A", length(text))
@@ -55,59 +74,174 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
     app <- shiny::shinyApp(
       ui = shiny::fluidPage(
         shiny::tags$head(
-          shiny::tags$style(HTML("/* styles omitted for brevity */")),
-          shiny::tags$script(HTML("/* JS omitted for brevity */"))
+          shiny::tags$style(HTML("
+      /* Global style for the pre element with text_display id */
+      #text_display {
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
+        overflow-wrap: anywhere !important;
+        width: 100% !important;
+        overflow: hidden !important;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        font-size: 14px;
+        line-height: 1.5;
+        margin: 0;
+        padding: 0;
+      }
+
+      .text-box {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 5px;
+        max-height: 500px;
+        overflow-y: auto;
+        overflow-x: hidden !important;
+        border: 1px solid #dee2e6;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      /* Ensure main panel doesn't create overflow */
+      .main-panel {
+        padding: 15px;
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+    "))
         ),
-        div(class = "title-panel", shiny::h1("Manual Validation")),
         shiny::sidebarLayout(
           shiny::sidebarPanel(
-            div(class = "sidebar",
-                shiny::h4("LLM Output:"),
-                shiny::verbatimTextOutput("llm_output_1"),
-                shiny::conditionalPanel(
-                  condition = "output.llm_evidence !== null",
-                  div(class = "evidence-text", shiny::textOutput("llm_evidence"))
-                ),
-                shiny::actionButton("correct_btn", "Valid", class = "btn btn-correct"),
-                shiny::actionButton("wrong_btn", "Invalid", class = "btn btn-wrong"),
-                shiny::textOutput("status_display"),
-                shiny::actionButton("prev_text", "Previous Text", class = "btn"),
-                shiny::actionButton("next_text", "Next Text", class = "btn"),
-                shiny::textAreaInput("comments", "Comments:", "N/A", width = "100%", height = "100px"),
-                shiny::actionButton("save_highlight", "Save Highlight", class = "btn"),
-                shiny::h5("Highlighted examples:"),
-                shiny::verbatimTextOutput("highlighted_text_display"),
-                shiny::h6("Examples highlighted in the text are automatically saved.")
+            shiny::div(class = "sidebar",
+                       shiny::h4(shiny::textOutput("navigation_info")),
+                       shiny::tags$div(
+                         class = "document-info",
+                         shiny::tags$strong("Document: "),
+                         shiny::textOutput("document_name", inline = TRUE)
+                       ),
+                       shiny::hr(),
+                       shiny::h4("LLM Output:"),
+                       shiny::div(class = "text-box", shiny::textOutput("text_display")),
+                       shiny::conditionalPanel(
+                         condition = "output.has_evidence",
+                         shiny::div(class = "evidence-text",
+                                    shiny::h5("Evidence:"),
+                                    shiny::textOutput("llm_evidence")
+                         )
+                       ),
+                       shiny::hr(),
+                       shiny::fluidRow(
+                         shiny::column(6, shiny::actionButton("correct_btn", "Valid",
+                                                              class = "btn btn-correct", width = "100%")),
+                         shiny::column(6, shiny::actionButton("wrong_btn", "Invalid",
+                                                              class = "btn btn-wrong", width = "100%"))
+                       ),
+                       shiny::br(),
+                       shiny::textOutput("status_display"),
+                       shiny::hr(),
+                       shiny::fluidRow(
+                         shiny::column(6, shiny::actionButton("prev_text", "Previous",
+                                                              class = "btn btn-secondary", width = "100%")),
+                         shiny::column(6, shiny::actionButton("next_text", "Next",
+                                                              class = "btn btn-secondary", width = "100%"))
+                       ),
+                       shiny::br(),
+                       shiny::textAreaInput("comments", "Comments:", "N/A", width = "100%", height = "100px"),
+                       shiny::actionButton("save_highlight", "Save Highlight", class = "btn btn-info"),
+                       shiny::h5("Highlighted examples:"),
+                       shiny::verbatimTextOutput("highlighted_text_display"),
+                       shiny::p("Examples highlighted in the text are automatically saved.",
+                                style = "font-size: 0.9em; color: #6c757d;"),
+                       shiny::textOutput("navigation_status")
             )
           ),
           shiny::mainPanel(
-            div(class = "main-panel",
-                shiny::h3("Text to Validate"),
-                div(class = "text-box", shiny::verbatimTextOutput("text_display"))
+            shiny::div(class = "main-panel",
+                       shiny::h3("Text to Validate"),
+                       shiny::div(class = "text-box", shiny::verbatimTextOutput("text_display"))
             )
           )
         ),
-        div(class = "footer",
-            shiny::HTML("AI Validator made with \u2665,
-                         <a href='https://shiny.posit.co/' target='_blank'>Shiny</a>,
-                         and <a href='https://github.com/features/copilot' target='_blank'>quanteda.llm</a> -
-                         remember, it is important to carefully check the output of LLMs.")
+        shiny::div(class = "footer",
+                   shiny::HTML(paste0(
+                     "AI Validator made with <span style='color: red;'>", "\u2665", "</span>, ",
+                     "<a href='https://shiny.posit.co/' target='_blank'>Shiny</a>, ",
+                     "and <a href='https://github.com/quanteda/quanteda.llm' target='_blank'>quanteda.llm</a>"
+                   ))
         )
       ),
       server = function(input, output, session) {
         current_index <- shiny::reactiveVal(1)
+        navigation_message <- shiny::reactiveVal("")
 
-        output$text_display <- shiny::renderText({ text[current_index()] })
+        # Navigation info display
+        output$navigation_info <- shiny::renderText({
+          paste("Document", current_index(), "of", length(text))
+        })
 
-        observe({
-          llm_current <- llm_output[[current_index()]]
+        # document name display
+        output$document_name <- shiny::renderText({
+          text_names[current_index()]
+        })
+
+        # For conditional panel
+        output$has_evidence <- shiny::reactive({
+          !is.null(llm_evidence)
+        })
+        shiny::outputOptions(output, "has_evidence", suspendWhenHidden = FALSE)
+
+        # Navigation status messages
+        output$navigation_status <- shiny::renderText({
+          navigation_message()
+        })
+
+        output$text_display <- shiny::renderText({
+          text[current_index()]
+        })
+
+        # Display LLM output
+        shiny::observe({
+          # Get the current row from llm_output
+          current_row <- llm_output[current_index(), ]
+
+          # Display the summary (or whatever column you want to validate)
           output$llm_output_1 <- shiny::renderText({
-            if (length(llm_current) >= 1) llm_current[1] else "N/A"
+            if (!is.null(current_row$summary)) {
+              current_row$summary
+            } else {
+              # If there's no 'summary' column, display all non-id columns
+              cols_to_show <- setdiff(names(current_row), "id")
+              if (length(cols_to_show) > 0) {
+                paste(current_row[cols_to_show], collapse = "\n")
+              } else {
+                "N/A"
+              }
+            }
           })
         })
 
+        # Display evidence if provided
         if (!is.null(llm_evidence)) {
-          output$llm_evidence <- shiny::renderText({ llm_evidence[[current_index()]] })
+          shiny::observe({
+            output$llm_evidence <- shiny::renderText({
+              if (is.data.frame(llm_evidence)) {
+                evidence_row <- llm_evidence[current_index(), ]
+                if ("evidence" %in% names(evidence_row)) {
+                  evidence_row$evidence
+                } else {
+                  cols_to_show <- setdiff(names(evidence_row), "id")
+                  if (length(cols_to_show) > 0) {
+                    evidence_row[[cols_to_show[1]]]
+                  } else {
+                    "N/A"
+                  }
+                }
+              } else if (is.character(llm_evidence)) {
+                llm_evidence[current_index()]
+              } else {
+                "N/A"
+              }
+            })
+          })
         }
 
         output$status_display <- shiny::renderText({
@@ -116,42 +250,56 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
 
         shiny::observeEvent(input$correct_btn, {
           result_env$status[current_index()] <- "Valid"
-          output$status_display <- shiny::renderText({
-            paste("Status:", result_env$status[current_index()])
-          })
         })
 
         shiny::observeEvent(input$wrong_btn, {
           result_env$status[current_index()] <- "Invalid"
-          output$status_display <- shiny::renderText({
-            paste("Status:", result_env$status[current_index()])
-          })
         })
 
         shiny::observe({
-          shiny::updateTextAreaInput(session, "comments", value = result_env$comments[current_index()])
+          shiny::updateTextAreaInput(session, "comments",
+                                     value = result_env$comments[current_index()])
           output$highlighted_text_display <- shiny::renderText({
             result_env$examples[current_index()]
           })
         })
 
         shiny::observeEvent(input$next_text, {
-          result_env$comments[current_index()] <<- input$comments
+          current_comments <- input$comments
+
           if (current_index() < length(text)) {
+            # Save comments if changed
+            if (current_comments != result_env$comments[current_index()]) {
+              result_env$comments[current_index()] <<- current_comments
+              shiny::showNotification("Comments saved", type = "message", duration = 2)
+            }
+
             current_index(current_index() + 1)
-            output$status <- shiny::renderText("Comments are saved by clicking previous/next text.")
           } else {
-            output$status <- shiny::renderText("You are at the last text.")
+            # Always save on the last document if trying to go next
+            if (current_comments != result_env$comments[current_index()]) {
+              result_env$comments[current_index()] <<- current_comments
+            }
+            shiny::showNotification(
+              "You are at the last document",
+              type = "warning",
+              duration = 3
+            )
           }
         })
 
         shiny::observeEvent(input$prev_text, {
           result_env$comments[current_index()] <<- input$comments
+
           if (current_index() > 1) {
             current_index(current_index() - 1)
-            output$status <- shiny::renderText("Comments are saved by clicking previous/next.")
+            shiny::showNotification("Comments saved", type = "message", duration = 2)
           } else {
-            output$status <- shiny::renderText("You are at the first text.")
+            shiny::showNotification(
+              "You are at the first document",
+              type = "warning",
+              duration = 3
+            )
           }
         })
 
@@ -184,6 +332,7 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
   return(data.frame(
     comments = result_env$comments,
     examples = result_env$examples,
-    status = result_env$status
+    status = result_env$status,
+    stringsAsFactors = FALSE
   ))
 }

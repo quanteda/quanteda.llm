@@ -29,6 +29,7 @@
 #'   )
 #' }
 #' @importFrom glue glue
+#' @importFrom cli cli_progress_bar cli_progress_update cli_progress_done
 #' @export
 ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
                     verbose = TRUE, result_env = NULL, ...) {
@@ -72,14 +73,41 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
   chat <- suppressMessages(do.call(chat_fn, args))
   model <- chat$get_model()
 
-  if (verbose) cat("\nCalling ", deparse(substitute(chat_fn)), " (", model, "):\n",
-                   sep = "")
+  # Count already processed documents
+  already_processed <- sum(names(.data) %in% names(result_env))
+  total_docs <- length(.data)
+  to_process <- total_docs - already_processed
 
-  for (doc_id in names(.data)) {
-    if (exists(doc_id, envir = result_env)) next  # skip if already processed
+  if (verbose && to_process > 0) {
+    cli::cli_inform("Using {.fn {deparse(substitute(chat_fn))}} with model {.val {model}}")
 
-    i <- which(names(.data) == doc_id)
-    if (verbose) cat("... processing: ", "[", i, "/", length(.data), "]\n", sep = "")
+    # Create progress bar
+    cli::cli_progress_bar(
+      format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} | {cli::pb_percent} | ETA: {cli::pb_eta} | {.file {current_doc}}",
+      total = total_docs,
+      clear = FALSE
+    )
+
+    # Initialize the progress bar at 0
+    current_doc <- names(.data)[1]
+    cli::cli_progress_update(set = 0)
+  }
+
+  for (i in seq_along(.data)) {
+    doc_id <- names(.data)[i]
+    current_doc <- doc_id  # Update for progress bar display
+
+    if (exists(doc_id, envir = result_env)) {
+      if (verbose) {
+        cli::cli_progress_update(set = i)  # Still update progress for skipped docs
+      }
+      next
+    }
+
+    # Update progress BEFORE processing (not after)
+    if (verbose) {
+      cli::cli_progress_update(set = i - 1 + 0.5)  # Show we're working on this doc
+    }
 
     if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
 
@@ -87,7 +115,16 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
       data <- chat$chat_structured(.data[i], type = type_object)
       flat <- unlist(data, recursive = TRUE, use.names = TRUE)
       result_env[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
+
+      # Update to show completion of this document
+      if (verbose) {
+        cli::cli_progress_update(set = i)
+      }
     }, error = function(e) {
+      if (verbose) {
+        cli::cli_alert_danger("Failed to process document {.val {doc_id}}: {.emph {e$message}}")
+        cli::cli_progress_update(set = i)  # Update progress even on error
+      }
       warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
     })
   }
@@ -104,22 +141,73 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
   df_results <- do.call(rbind, df_list)
   rownames(df_results) <- NULL
 
-  # Warn if any response is empty
+  # Check for empty responses
   empty_docs <- vapply(result_env, function(x) {
     all(vapply(x, function(col) all(nzchar(col) == FALSE), logical(1)))
   }, logical(1))
 
   if (any(empty_docs)) {
-    warning(
-      "One or more documents returned empty responses. ",
-      "This may be due to:\n",
-      "- A missing or incorrectly set API key\n",
-      "- The input exceeding the model's sequence length limit\n",
-      "Please check both your API setup and whether your input text is too long."
-    )
+    empty_count <- sum(empty_docs)
+    empty_names <- names(which(empty_docs))
+
+    cli::cli_alert_warning(c(
+      "{.val {empty_count}} document{?s} returned empty response{?s}",
+      "!" = "This may be due to:",
+      "*" = "Missing or incorrectly set API key",
+      "*" = "Input text exceeding model's sequence length limit",
+      "i" = "Empty documents: {.val {empty_names}}"
+    ))
   }
 
-  if (verbose) cat("Finished.\n")
+  if (verbose) {
+    cli::cli_alert_success("Processed {.val {total_docs}} document{?s} successfully")
+  }
 
   return(df_results)
 }
+
+# if (verbose) cat("\nCalling ", deparse(substitute(chat_fn)), " (", model, "):\n",
+#                    sep = "")
+#
+#   for (doc_id in names(.data)) {
+#     if (exists(doc_id, envir = result_env)) next  # skip if already processed
+#
+#     i <- which(names(.data) == doc_id)
+#     if (verbose) cat("... processing: ", "[", i, "/", length(.data), "]\n", sep = "")
+#
+#     if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
+#
+#     tryCatch({
+#       data <- chat$chat_structured(.data[i], type = type_object)
+#       flat <- unlist(data, recursive = TRUE, use.names = TRUE)
+#       result_env[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
+#     }, error = function(e) {
+#       warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
+#     })
+#   }
+#
+#   # df_results <- dplyr::bind_rows(as.list(result_env), .id = "id")
+#   df_results <- do.call(rbind, Map(cbind, id = names(result_env), as.list(result_env)))
+#   rownames(df_results) <- NULL
+#
+#
+#
+#   # Warn if any response is empty
+#   empty_docs <- vapply(result_env, function(x) {
+#     all(vapply(x, function(col) all(nzchar(col) == FALSE), logical(1)))
+#   }, logical(1))
+#
+#   if (any(empty_docs)) {
+#     warning(
+#       "One or more documents returned empty responses. ",
+#       "This may be due to:\n",
+#       "- A missing or incorrectly set API key\n",
+#       "- The input exceeding the model's sequence length limit\n",
+#       "Please check both your API setup and whether your input text is too long."
+#     )
+#   }
+#
+#   if (verbose) cat("Finished.\n")
+#
+#   return(df_results)
+# }

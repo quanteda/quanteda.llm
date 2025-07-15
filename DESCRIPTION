@@ -23,6 +23,7 @@ Depends:
 Remotes: 
     github::quanteda/quanteda.tidy
 Imports: 
+    cli (>= 3.0.0),
     glue,
     rlang,
     shiny
