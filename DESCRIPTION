@@ -19,7 +19,7 @@ Description: Provides support for linking quanteda corpus objects to structured,
 License: GPL-3
 Depends:
     R (>= 3.5.0),
-    ellmer
+    ellmer (>= 0.2.1)
 Remotes: 
     github::quanteda/quanteda.tidy
 Imports: 
