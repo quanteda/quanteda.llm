@@ -38,7 +38,7 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
   # Create or use existing environment
   if (is.null(result_env)) {
     result_env <- new.env()
-    internal_env <- TRUE  # Flag to know we created it
+    internal_env <- TRUE
   } else {
     internal_env <- FALSE
   }
@@ -46,7 +46,6 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
   pb_id <- NULL
 
   tryCatch({
-
     if (!is.character(.data))
       stop("Unsupported data type for ai_text")
 
@@ -55,11 +54,6 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     if (is.null(names(.data)))
       names(.data) <- paste0("text", as.character(seq_along(.data)))
     original_order <- names(.data)
-
-    df_results <- data.frame(
-      id = original_order,
-      stringsAsFactors = FALSE
-    )
 
     # Set up system prompt
     if (!"system_prompt" %in% names(args)) {
@@ -93,32 +87,28 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     total_docs <- length(.data)
     to_process <- total_docs - already_processed
 
-    current_doc <- NA_character_  # Needed for progress bar format
+    current_doc <- NA_character_
 
     if (verbose && to_process > 0) {
       cli::cli_inform("Using {.fn {deparse(substitute(chat_fn))}} with model {.val {model}}")
 
-      # Initialize progress bar BEFORE the loop
       pb_id <- cli::cli_progress_bar(
         format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} | {cli::pb_percent} | ETA: {cli::pb_eta} | {.file {current_doc}}",
         total = to_process,
         clear = FALSE,
         .envir = environment()
       )
+
+      cli::cli_progress_update(id = pb_id, set = 0, force = TRUE)
     }
 
-    # Show initial state immediately
-    cli::cli_progress_update(id = pb_id, set = 0, force = TRUE)
-
-    # Track actual progress separately
     processed_count <- 0
 
-    # Then in the loop, update the current_doc BEFORE checking existence
+    # MAIN PROCESSING LOOP
     for (i in seq_along(.data)) {
       doc_id <- names(.data)[i]
-      current_doc <- doc_id  # Update this first
+      current_doc <- doc_id
 
-      # Update progress bar to show current file being checked
       if (verbose && !is.null(pb_id)) {
         cli::cli_progress_update(
           id = pb_id,
@@ -140,21 +130,44 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
         flat <- unlist(data, recursive = TRUE, use.names = TRUE)
         result_env[[doc_id]] <- as.data.frame(as.list(flat), stringsAsFactors = FALSE)
 
+        # Pre-allocate AFTER first successful result
+        if (!exists("df_results_full", envir = environment())) {
+          template <- result_env[[doc_id]]
+
+          df_results_full <- data.frame(
+            id = original_order,
+            matrix(NA, nrow = length(.data), ncol = ncol(template)),
+            stringsAsFactors = FALSE
+          )
+          names(df_results_full) <- c("id", names(template))
+
+          for (col in names(template)) {
+            class(df_results_full[[col]]) <- class(template[[col]])
+          }
+        }
+
+        # Fill the pre-allocated data frame
+        if (exists("df_results_full", envir = environment())) {
+          row_idx <- which(original_order == doc_id)
+          for (col in names(flat)) {
+            df_results_full[row_idx, col] <- flat[[col]]
+          }
+        }
+
         processed_count <- processed_count + 1
 
         if (verbose && !is.null(pb_id)) {
           cli::cli_progress_update(id = pb_id, set = processed_count)
         }
       }, error = function(e) {
-        processed_count <- processed_count + 1  # Still increment
+        processed_count <- processed_count + 1
 
         if (verbose) {
           cli::cli_alert_danger("Failed to process document {.val {doc_id}}: {.emph {e$message}}")
           if (!is.null(pb_id)) {
-            # Safe progress update with error handling
             tryCatch(
               cli::cli_progress_update(id = pb_id, set = processed_count),
-              error = function(e2) {} # Ignore progress bar errors
+              error = function(e2) {}
             )
           }
         }
@@ -162,33 +175,44 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
       })
     }
 
-    if (length(result_env) > 0) {
-      # Build processed results
+    # AFTER THE LOOP - Construct final results
+    if (exists("df_results_full", envir = environment())) {
+      # Use the pre-allocated results
+      df_results <- df_results_full
+    } else if (length(result_env) > 0) {
+      # Fallback method if pre-allocation didn't happen
+      df_results <- data.frame(
+        id = original_order,
+        stringsAsFactors = FALSE
+      )
+
       processed_list <- lapply(names(result_env), function(doc_id) {
         cbind(id = doc_id, result_env[[doc_id]], stringsAsFactors = FALSE)
       })
       processed_df <- do.call(rbind, processed_list)
 
-      # Left join to preserve all documents
       df_results <- merge(
         df_results,
         processed_df,
         by = "id",
-        all.x = TRUE,  # Keep all original documents
-        sort = FALSE   # Preserve order
+        all.x = TRUE,
+        sort = FALSE
       )
 
-      # Ensure original order is maintained
       df_results <- df_results[match(original_order, df_results$id), ]
+    } else {
+      # No results at all
+      df_results <- data.frame(
+        id = original_order,
+        stringsAsFactors = FALSE
+      )
     }
 
-    # Add attribute to indicate which documents failed
+    # Add attributes
     failed_docs <- setdiff(original_order, names(result_env))
     if (length(failed_docs) > 0) {
       attr(df_results, "failed_documents") <- failed_docs
     }
-
-    # Your empty response checking code stays here...
 
     if (verbose) {
       successful_count <- sum(df_results$id %in% names(result_env))
