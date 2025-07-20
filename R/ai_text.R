@@ -98,7 +98,7 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
     if (verbose && to_process > 0) {
       cli::cli_inform("Using {.fn {deparse(substitute(chat_fn))}} with model {.val {model}}")
 
-      # Store the progress bar ID
+      # Initialize progress bar BEFORE the loop
       pb_id <- cli::cli_progress_bar(
         format = "{cli::pb_bar} {cli::pb_current}/{cli::pb_total} | {cli::pb_percent} | ETA: {cli::pb_eta} | {.file {current_doc}}",
         total = to_process,
@@ -107,23 +107,30 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
       )
     }
 
+    # Show initial state immediately
+    cli::cli_progress_update(id = pb_id, set = 0, force = TRUE)
+
     # Track actual progress separately
     processed_count <- 0
 
+    # Then in the loop, update the current_doc BEFORE checking existence
     for (i in seq_along(.data)) {
       doc_id <- names(.data)[i]
-      current_doc <- doc_id
+      current_doc <- doc_id  # Update this first
+
+      # Update progress bar to show current file being checked
+      if (verbose && !is.null(pb_id)) {
+        cli::cli_progress_update(
+          id = pb_id,
+          set = processed_count,
+          force = TRUE,
+          .envir = environment()
+        )
+      }
 
       if (exists(doc_id, envir = result_env)) {
         processed_count <- processed_count + 1
-        if (verbose && !is.null(pb_id)) {
-          cli::cli_progress_update(id = pb_id, set = processed_count)
-        }
         next
-      }
-
-      if (verbose && !is.null(pb_id)) {
-        cli::cli_progress_update(id = pb_id, set = processed_count + 0.5)
       }
 
       if (i > 1) suppressMessages(chat <- do.call(chat_fn, args))
