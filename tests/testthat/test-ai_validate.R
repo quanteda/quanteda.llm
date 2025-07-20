@@ -68,3 +68,15 @@ test_that("ai_validate handles multiple texts input correctly - salience", {
   expect_equal(result$examples, rep("", length(txt)))
   expect_equal(result$status, rep("Unmarked", length(txt)))
 })
+
+# Test for ai_validate without launching app
+test_that("ai_validate handles missing llm_output id column", {
+  expect_error(
+    ai_validate(
+      text = c("Text 1", "Text 2"),
+      llm_output = data.frame(summary = c("Sum 1", "Sum 2")),
+      launch_app = FALSE
+    ),
+    "llm_output must have an 'id' column"
+  )
+})

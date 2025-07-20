@@ -35,6 +35,19 @@
 ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
                     verbose = TRUE, result_env = NULL, ...) {
 
+  if (!is.character(.data))
+    stop("Unsupported data type for ai_text")
+
+  if (length(.data) == 0)
+    stop("No documents to process")
+
+  if (!inherits(type_object, c("ellmer::TypeObject", "ellmer::TypeArray", "ellmer::Type"))) {
+    stop("type_object must be created with ellmer::type_object() or related functions")
+  }
+
+  # capture additional arguments
+  args <- rlang::list2(...)
+
   # Create or use existing environment
   if (is.null(result_env)) {
     result_env <- new.env()
@@ -46,11 +59,6 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
   pb_id <- NULL
 
   tryCatch({
-    if (!is.character(.data))
-      stop("Unsupported data type for ai_text")
-
-    args <- rlang::list2(...)
-
     if (is.null(names(.data)))
       names(.data) <- paste0("text", as.character(seq_along(.data)))
     original_order <- names(.data)
@@ -230,6 +238,15 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
         cli::cli_progress_done(id = pb_id),
         error = function(e2) {} # Ignore if already closed
       )
+    }
+
+    if (grepl("parse error|premature EOF", e$message)) {
+      cli::cli_alert_warning(c(
+        "JSON parsing failed for {.val {doc_id}}",
+        "!" = "Document length: {.val {nchar(.data[i])}} characters",
+        "i" = "This often happens when documents exceed model token limits",
+        ">" = "Consider: truncating text, using a model with larger context, or adjusting max_tokens"
+      ))
     }
 
     if (verbose) {
