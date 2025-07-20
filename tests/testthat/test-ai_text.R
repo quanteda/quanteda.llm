@@ -310,3 +310,165 @@ test_that("error messages are clean without tryCatch wrapping", {
   expect_false(grepl("Returning", err))
 })
 
+test_that("ai_text provides enhanced error messages for JSON parsing failures", {
+  # Mock that returns invalid JSON (triggers parse error)
+  chat_fn_json_error <- function(...) {
+    structure(list(
+      get_model = function() "mock-model",
+      chat_structured = function(text, type) {
+        # Simulate a JSON parsing error
+        stop("parse error: premature EOF\n                     {\"score\": \n                     (right here) ------^")
+      }
+    ), class = "MockChat")
+  }
+
+  # Create a long document to test length reporting
+  long_doc <- paste(rep("This is a long document. ", 1000), collapse = "")
+  docs <- c(doc1 = long_doc)
+
+  # Capture messages
+  messages <- capture_messages({
+    suppressWarnings({
+      result <- ai_text(
+        .data = docs,
+        chat_fn = chat_fn_json_error,
+        type_object = structure(list(), class = "ellmer::Type"),
+        verbose = TRUE
+      )
+    })
+  })
+
+  # Check that enhanced error message appears
+  expect_match(messages, "JSON parsing failed", all = FALSE)
+  expect_match(messages, "Document length:.*characters", all = FALSE)
+  expect_match(messages, "documents exceed model token limits", all = FALSE)
+  expect_match(messages, "Consider.*truncating", all = FALSE)
+})
+
+test_that("ai_text shows regular error messages for non-JSON errors", {
+  # Mock that returns a different type of error
+  chat_fn_api_error <- function(...) {
+    structure(list(
+      get_model = function() "mock-model",
+      chat_structured = function(text, type) {
+        stop("API rate limit exceeded")
+      }
+    ), class = "MockChat")
+  }
+
+  docs <- c(doc1 = "Test document")
+
+  messages <- capture_messages({
+    suppressWarnings({
+      result <- ai_text(
+        .data = docs,
+        chat_fn = chat_fn_api_error,
+        type_object = structure(list(), class = "ellmer::Type"),
+        verbose = TRUE
+      )
+    })
+  })
+
+  # Should show rate limit specific message
+  expect_match(messages, "Rate limit exceeded for", all = FALSE)
+  expect_match(messages, "API quota or rate limit reached", all = FALSE)
+
+  # Should NOT show generic error message for rate limit errors
+  expect_no_match(messages, "Failed to process document", all = FALSE)
+  # Should NOT show JSON-specific messages
+  expect_no_match(messages, "JSON parsing failed", all = FALSE)
+  expect_no_match(messages, "token limits", all = FALSE)
+})
+
+test_that("ai_text shows generic error messages for unrecognized errors", {
+  # Mock that returns an unrecognized error type
+  chat_fn_unknown_error <- function(...) {
+    structure(list(
+      get_model = function() "mock-model",
+      chat_structured = function(text, type) {
+        stop("Unknown error occurred")
+      }
+    ), class = "MockChat")
+  }
+
+  docs <- c(doc1 = "Test document")
+
+  messages <- capture_messages({
+    suppressWarnings({
+      result <- ai_text(
+        .data = docs,
+        chat_fn = chat_fn_unknown_error,
+        type_object = structure(list(), class = "ellmer::Type"),
+        verbose = TRUE
+      )
+    })
+  })
+
+  # Should show generic error message
+  expect_match(messages, "Failed to process document.*Unknown error occurred", all = FALSE)
+  # Should NOT show specific error messages
+  expect_no_match(messages, "JSON parsing failed", all = FALSE)
+  expect_no_match(messages, "Rate limit exceeded", all = FALSE)
+  expect_no_match(messages, "Request timeout", all = FALSE)
+})
+
+
+test_that("ai_text reports document length accurately in error messages", {
+  chat_fn_json_error <- function(...) {
+    structure(list(
+      get_model = function() "mock-model",
+      chat_structured = function(text, type) {
+        stop("parse error: premature EOF")
+      }
+    ), class = "MockChat")
+  }
+
+  # Test with specific length document
+  test_text <- paste(rep("a", 12345), collapse = "")
+  docs <- c(test_doc = test_text)
+
+  messages <- capture_messages({
+    suppressWarnings({
+      result <- ai_text(
+        .data = docs,
+        chat_fn = chat_fn_json_error,
+        type_object = structure(list(), class = "ellmer::Type"),
+        verbose = TRUE
+      )
+    })
+  })
+
+  # Check that it reports the correct length
+  expect_match(messages, "Document length:.*12345.*characters", all = FALSE)
+})
+
+test_that("enhanced error messages respect verbose setting", {
+  chat_fn_json_error <- function(...) {
+    structure(list(
+      get_model = function() "mock-model",
+      chat_structured = function(text, type) {
+        stop("parse error: premature EOF")
+      }
+    ), class = "MockChat")
+  }
+
+  docs <- c(doc1 = "Test")
+
+  # With verbose = FALSE, should not see detailed messages
+  messages <- capture_messages({
+    warnings <- capture_warnings({
+      result <- ai_text(
+        .data = docs,
+        chat_fn = chat_fn_json_error,
+        type_object = structure(list(), class = "ellmer::Type"),
+        verbose = FALSE
+      )
+    })
+  })
+
+  # Should not see cli messages when verbose = FALSE
+  expect_length(messages, 0)
+
+  # But should still get the warning
+  expect_match(warnings, "Skipping document doc1 due to error", all = FALSE)
+})

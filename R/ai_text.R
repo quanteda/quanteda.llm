@@ -171,14 +171,39 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
         processed_count <- processed_count + 1
 
         if (verbose) {
-          cli::cli_alert_danger("Failed to process document {.val {doc_id}}: {.emph {e$message}}")
-          if (!is.null(pb_id)) {
+          # Enhanced error reporting for specific error types
+          if (grepl("parse error|premature EOF", e$message)) {
+            cli::cli_alert_warning(c(
+              "JSON parsing failed for {.val {doc_id}}",
+              "!" = "Document length: {.val {nchar(.data[i])}} characters",
+              "i" = "This often happens when documents exceed model token limits",
+              ">" = "Consider: truncating text, using a model with larger context, or adjusting max_tokens"
+            ))
+          } else if (grepl("rate limit|quota exceeded", e$message, ignore.case = TRUE)) {
+            cli::cli_alert_warning(c(
+              "Rate limit exceeded for {.val {doc_id}}",
+              "!" = "API quota or rate limit reached",
+              ">" = "Consider: adding a delay between requests or upgrading your API plan"
+            ))
+          } else if (grepl("timeout|timed out", e$message, ignore.case = TRUE)) {
+            cli::cli_alert_warning(c(
+              "Request timeout for {.val {doc_id}}",
+              "!" = "Document length: {.val {nchar(.data[i])}} characters",
+              ">" = "Consider: increasing timeout or reducing document length"
+            ))
+          } else {
+            # Generic error message for other errors
+            cli::cli_alert_danger("Failed to process document {.val {doc_id}}: {.emph {e$message}}")
+          }
+
+          if (verbose && !is.null(pb_id)) {
             tryCatch(
               cli::cli_progress_update(id = pb_id, set = processed_count),
               error = function(e2) {}
             )
           }
         }
+
         warning(glue::glue("Skipping document {doc_id} due to error: {e$message}"))
       })
     }
@@ -240,28 +265,7 @@ ai_text <- function(.data, chat_fn, type_object, few_shot_examples = NULL,
       )
     }
 
-    if (grepl("parse error|premature EOF", e$message)) {
-      cli::cli_alert_warning(c(
-        "JSON parsing failed for {.val {doc_id}}",
-        "!" = "Document length: {.val {nchar(.data[i])}} characters",
-        "i" = "This often happens when documents exceed model token limits",
-        ">" = "Consider: truncating text, using a model with larger context, or adjusting max_tokens"
-      ))
-    }
-
-    if (verbose) {
-      cli::cli_alert_danger("Processing interrupted: {.emph {e$message}}")
-      actual_processed <- length(ls(result_env))
-      cli::cli_alert_info("Returning {.val {actual_processed}} successfully processed documents")
-    }
-
     # Reconstruct partial results
-    df_list <- list()
-    for (doc_id in names(result_env)) {
-      df_list[[doc_id]] <- cbind(id = doc_id, result_env[[doc_id]],
-                                 stringsAsFactors = FALSE)
-    }
-
     if (length(result_env) > 0) {
       # Pre-allocate with available names
       df_results <- data.frame(
