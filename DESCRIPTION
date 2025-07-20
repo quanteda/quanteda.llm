@@ -20,8 +20,6 @@ License: GPL-3
 Depends:
     R (>= 3.5.0),
     ellmer (>= 0.2.1)
-Remotes: 
-    github::quanteda/quanteda.tidy
 Imports: 
     cli (>= 3.0.0),
     glue,
@@ -35,7 +33,6 @@ Suggests:
     knitr,
     rmarkdown,
     quanteda,
-    quanteda.tidy,
     kableExtra
 Config/testthat/edition: 3
 Encoding: UTF-8

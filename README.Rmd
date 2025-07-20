@@ -103,7 +103,6 @@ You can install the development version of **quanteda.llm** from
 ```{r, eval = FALSE}
 # install.packages("pak")
 pak::pak("quanteda/quanteda.llm")
-pak::pak("quanteda/quanteda.tidy")
 ```
 
 ## Example use
