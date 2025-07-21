@@ -117,15 +117,23 @@ outputs<a class="anchor" aria-label="anchor" href="#using-ai_validate-to-manuall
 <span>                   model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
 <span>                   api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  9s | <span style="color: #0000BB;">2017-Trump</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■                               </span> 0/3 |   0% | ETA: ? | <span style="color: #0000BB;">NA</span></span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  3s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■                               </span> 0/3 |   0% | ETA: ? | <span style="color: #0000BB;">2017-Trump</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  7s | <span style="color: #0000BB;">2017-Trump</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■                     </span> 1/3 |  33% | ETA:  7s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  4s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■           </span> 2/3 |  67% | ETA:  4s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 3/3 | 100% | ETA:  0s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">3</span> documents successfully</span></span></code></pre>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Returned <span style="color: #0000BB;">3</span> documents (<span style="color: #0000BB;">3</span> successful, <span style="color: #0000BB;">0</span> with NAs)</span></span></code></pre>
 <p>Now validate the scores and return the result:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../../../reference/ai_validate.html">ai_validate</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, <span class="va">result</span><span class="op">)</span></span></code></pre></div>

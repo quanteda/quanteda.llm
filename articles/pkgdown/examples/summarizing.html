@@ -103,17 +103,27 @@ summarization.</p>
 <code class="sourceCode R"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../../reference/ai_summary.html">ai_summary</a></span><span class="op">(</span><span class="va">data_corpus_inaugural</span>, chat_fn <span class="op">=</span> <span class="va">chat_openai</span>, model <span class="op">=</span> <span class="st">"gpt-4o"</span>,</span>
 <span>                    api_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>temperature <span class="op">=</span> <span class="fl">0</span>, seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using `chat_fn()` with model <span style="color: #0000BB;">"gpt-4o"</span></span></span>
-<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA:  9s | <span style="color: #0000BB;">2013-Obama</span></span></span>
+<span><span class="co">## <span style="color: #00BB00;">■                               </span> 0/4 |   0% | ETA: ? | <span style="color: #0000BB;">NA</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■                               </span> 0/4 |   0% | ETA: ? | <span style="color: #0000BB;">2013-Obama</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA:  8s | <span style="color: #0000BB;">2013-Obama</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■                       </span> 1/4 |  25% | ETA:  8s | <span style="color: #0000BB;">2017-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span> 2/4 |  50% | ETA:  6s | <span style="color: #0000BB;">2017-Trump</span></span></span>
 <span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span> 2/4 |  50% | ETA:  6s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span> 3/4 |  75% | ETA:  3s | <span style="color: #0000BB;">2021-Biden</span></span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■         </span> 3/4 |  75% | ETA:  3s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## <span style="color: #00BB00;">■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ </span> 4/4 | 100% | ETA:  0s | <span style="color: #0000BB;">2025-Trump</span></span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## </span></span>
-<span><span class="co">## <span style="color: #00BB00;">✔</span> Processed <span style="color: #0000BB;">4</span> documents successfully</span></span></code></pre>
+<span><span class="co">## <span style="color: #00BB00;">✔</span> Returned <span style="color: #0000BB;">4</span> documents (<span style="color: #0000BB;">4</span> successful, <span style="color: #0000BB;">0</span> with NAs)</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/" class="external-link">kableExtra</a></span><span class="op">)</span></span>
 <span>  <span class="va">result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -138,14 +148,12 @@ summary
 The document is a speech delivered during a presidential inauguration,
 emphasizing the enduring strength of the U.S. Constitution and the
 promise of democracy. It highlights the importance of unity, collective
-action, and adapting to new challenges while staying true to founding
-principles. The speech calls for economic recovery, social equality, and
-environmental responsibility, urging Americans to work together to
-address issues like climate change, healthcare, and education. It
-stresses the need for peace, security, and global leadership, while
-advocating for equality and justice for all citizens. The speech
-concludes with a call to action for citizens to shape the nation’s
-future through active participation and commitment to shared values.
+action, and the need to adapt to changing times while staying true to
+founding principles. The speech addresses various challenges, including
+economic recovery, social equality, climate change, and global peace,
+urging Americans to work together to overcome them. It calls for a
+commitment to equality, opportunity, and justice, and stresses the role
+of citizens in shaping the nation’s future.
 </td>
 </tr>
 <tr>
@@ -176,7 +184,7 @@ calls for unity and collective action to overcome these issues,
 highlighting the resilience of the American people and the need to
 uphold truth and democracy. The speech also pays tribute to past leaders
 and the sacrifices made by Americans, urging the nation to work together
-to build a better future.
+for a better future.
 </td>
 </tr>
 <tr>
@@ -187,16 +195,13 @@ to build a better future.
 The document is a speech by a political leader, likely Donald Trump,
 marking the beginning of a new term in office. The speech emphasizes a
 vision of national renewal, focusing on restoring America’s sovereignty,
-safety, and prosperity. The leader promises to prioritize American
-interests, address challenges such as government inefficiency, border
-security, and economic issues, and promote national unity. The speech
-includes plans to implement various policies, such as declaring a
-national emergency at the southern border, revoking certain
-environmental mandates, and restoring free speech. The leader also
-highlights a commitment to strengthening the military, fostering
-economic growth, and pursuing ambitious goals like space exploration.
-The overarching theme is a call for national pride and a return to
-American greatness.
+safety, and prosperity. The leader outlines plans to prioritize American
+interests, address government inefficiencies, and tackle issues such as
+border security, energy independence, and economic revitalization. The
+speech also highlights a commitment to national unity, free speech, and
+a return to traditional values. The leader expresses confidence in
+overcoming challenges and achieving unprecedented national success,
+invoking themes of American exceptionalism and manifest destiny.
 </td>
 </tr>
 </tbody>
