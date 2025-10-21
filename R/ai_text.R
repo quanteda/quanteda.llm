@@ -113,7 +113,7 @@ ai_text <- function(.data, chat_fn, type_object = NULL, few_shot_examples = NULL
   
   # Process all documents in one batch
   tryCatch({
-    results <- parallel_chat_structured_robust(
+    results <- parallel_chat_structured(
       chat,
       prompts = as.list(.data),  # Pass all documents as a list
       type = type_object,
