@@ -6,8 +6,6 @@
 #' few-shot learning examples for better performance.
 #'
 #' @param .data A character vector of texts
-#' @param module An object created with [make_module()] containing the system prompt,
-#'   a type_object, and optional post-processing function.
 #' @param chat_fn A function like [chat_openai()][ellmer::chat_openai()]. See
 #' <https://ellmer.tidyverse.org/articles/structured-data.html> for details.
 #' @param ... additional arguments passed to `chat_fn`

@@ -30,9 +30,6 @@ ai_text(
 
 \item{result_env}{An environment to store results and allow resuming}
 
-\item{module}{An object created with \code{\link[=make_module]{make_module()}} containing the system prompt,
-a type_object, and optional post-processing function.}
-
 \item{...}{additional arguments passed to \code{chat_fn}}
 }
 \value{

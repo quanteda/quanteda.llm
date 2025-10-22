@@ -19,7 +19,7 @@ Description: Provides support for linking quanteda corpus objects to structured,
 License: GPL-3
 Depends:
     R (>= 3.5.0),
-    ellmer (>= 0.2.1)
+    ellmer (>= 0.3.2)
 Imports: 
     cli (>= 3.0.0),
     glue,

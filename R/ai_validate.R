@@ -12,6 +12,7 @@
 #' @param llm_evidence a character vector; the name of an additional LLM output
 #' such as evidence or justifications provided by the LLM
 #' @param verbose logical; output a progress indicator if `TRUE`
+#' @param result_env An environment to store results and allow resuming
 #' @param launch_app Logical, whether to launch the interactive Shiny app. Defaults to TRUE.
 #' @inheritParams ai_text
 #' @return character; the response from the manual validation with a length
@@ -30,7 +31,7 @@
 #' }
 #' @import shiny
 #' @export
-ai_validate <- function(text, llm_output, llm_evidence = NULL,
+ai_validate <- function(text, llm_output = NULL, llm_evidence = NULL,
                         result_env = new.env(), ..., verbose = TRUE, launch_app = TRUE) {
   
   if (!is.character(text)) {
@@ -42,15 +43,16 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
     text_names <- as.character(seq_along(text))
   }
   
-  if ("id" %in% names(llm_output)) {
-    llm_output <- llm_output[match(text_names, llm_output$id), ]
-    if (any(is.na(llm_output$id))) {
-      stop("Some text names don't match with llm_output ids")
+  # Ensure llm_output is a vector and matches the length of text
+  if (!is.null(llm_output)) {
+    if (!is.atomic(llm_output) || length(llm_output) != length(text)) {
+      stop("`llm_output` must be a vector of the same length as `text`.")
     }
   } else {
-    stop("llm_output must have an 'id' column")
+    llm_output <- rep(NA, length(text))  # Default to NA if llm_output is NULL
   }
   
+  # Initialize result_env variables
   if (!exists("comments", envir = result_env)) {
     result_env$comments <- rep("N/A", length(text))
     result_env$examples <- rep("", length(text))
@@ -115,7 +117,7 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
                        shiny::hr(),
                        shiny::h4("LLM Output:"),
                        shiny::div(class = "text-box",
-                                  shiny::verbatimTextOutput("llm_output_1")),  # FIXED: show LLM output here
+                                  shiny::verbatimTextOutput("llm_output_1")),
                        shiny::conditionalPanel(
                          condition = "output.has_evidence",
                          shiny::div(class = "evidence-text",
@@ -173,7 +175,7 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
           paste("Document", current_index(), "of", length(text))
         })
         
-        # document name display
+        # Document name display
         output$document_name <- shiny::renderText({
           text_names[current_index()]
         })
@@ -195,35 +197,13 @@ ai_validate <- function(text, llm_output, llm_evidence = NULL,
         
         # Show LLM output (reactive, updates when current_index changes)
         output$llm_output_1 <- shiny::renderText({
-          current_row <- llm_output[current_index(), ]
-          if (!is.null(current_row$summary)) {
-            current_row$summary
-          } else {
-            cols_to_show <- setdiff(names(current_row), "id")
-            if (length(cols_to_show) > 0) {
-              paste(current_row[cols_to_show], collapse = "\n")
-            } else {
-              "N/A"
-            }
-          }
+          llm_output[current_index()]
         })
         
         # Show evidence if any
         if (!is.null(llm_evidence)) {
           output$llm_evidence <- shiny::renderText({
-            if (is.data.frame(llm_evidence)) {
-              evidence_row <- llm_evidence[current_index(), ]
-              if ("evidence" %in% names(evidence_row)) {
-                evidence_row$evidence
-              } else {
-                cols_to_show <- setdiff(names(evidence_row), "id")
-                if (length(cols_to_show) > 0) {
-                  evidence_row[[cols_to_show[1]]]
-                } else {
-                  "N/A"
-                }
-              }
-            } else if (is.character(llm_evidence)) {
+            if (is.character(llm_evidence)) {
               llm_evidence[current_index()]
             } else {
               "N/A"

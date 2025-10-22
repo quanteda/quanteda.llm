@@ -7,7 +7,7 @@ stored in a character vector}
 \usage{
 ai_validate(
   text,
-  llm_output,
+  llm_output = NULL,
   llm_evidence = NULL,
   result_env = new.env(),
   ...,
