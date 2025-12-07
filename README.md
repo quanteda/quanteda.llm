@@ -15,6 +15,12 @@ coverage](https://codecov.io/gh/quanteda/quanteda.llm/graph/badge.svg)](https://
 [![pkgdown](https://img.shields.io/badge/pkgdown-site-blue)](https://quanteda.github.io/quanteda.llm/)
 <!-- badges: end -->
 
+**PLEASE NOTE: The quanteda.llm package is no longer actively
+maintained. Please check out our new
+[quallmer](https://github.com/SeraphineM/quallmer) package for
+up-to-date functionality for AI-assisted annotation to texts, images,
+pdfs, tabular data and other structured data.**
+
 The **quanteda.llm** package makes it easy to use LLMs with
 [quanteda](https://quanteda.io/) corpora (or character vectors and data
 frames), to enable classification, summarisation, scoring, and analysis
@@ -99,6 +105,12 @@ command line (e.g. with ollama pull llama3.1) or within R using the
 used.
 
 ## Installation
+
+**PLEASE NOTE: The quanteda.llm package is no longer actively
+maintained. Please check out our new
+[quallmer](https://github.com/SeraphineM/quallmer) package for
+up-to-date functionality for AI-assisted annotation to texts, images,
+pdfs, tabular data and other structured data.**
 
 You can install the development version of **quanteda.llm** from
 <https://github.com/quanteda/quanteda.llm> with:
